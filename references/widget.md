@@ -19,7 +19,12 @@
    Дотошность, Совиность, Нетерпеливость, Кэш-скряга; последняя есть только при доступной
    экономике), с готовыми подписями-бакетами; не выдумывать свои формулы и тексты.
 2а. Все упоминания источников (arxiv, Anthropic docs) — КЛИКАБЕЛЬНЫЕ <a href>, не голый текст.
-2б. Ачивки — РАЗВЁРНУТЫМИ карточками (.ac), без тултипов и hover: в каждой сразу видны иконка + название (цвет редкости) + редкость + флейвор (desc_*) + условие (cond_*) из profile.json. Сетка 3 колонки (.chips).
+2б. Ачивки — РАЗВЁРНУТЫМИ карточками (.ac), без тултипов и hover: в каждой сразу видны
+   иконка + название (цвет редкости) + редкость + флейвор (desc_*) + условие (cond_*) из
+   profile.json. Сетка 3 колонки (.chips). Сразу показываются ТОЛЬКО legendary и epic;
+   rare и common — внутри <details class="more"> с summary
+   «Показать все достижения — ещё N (rare и common)». Если legendary/epic нет вовсе —
+   показать первые 6 по редкости, остальное в аккордеон.
 3. Никаких картинок: ни аватаров, ни иконок, ни SVG, ни base64, ни внешних ресурсов.
 4. Отдельной секции «Рекомендации» НЕТ — советы живут парами в «Слабое → что делать».
 4а. Идентичность: строка под титулом «{класс} · {раса} ({доля}% реплик)» из profile.identity;
@@ -134,6 +139,11 @@ a{color:var(--brass);text-decoration:none;border-bottom:1px dotted var(--brass-d
 .ac .fl{font-size:12.5px;color:#C0AF9A;line-height:1.4;margin-top:3px}
 .ac .cd{font-size:11.5px;color:var(--mut);font-style:italic;margin-top:2px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:4px 36px;align-items:start}
+.more{margin-top:12px}
+.more summary{cursor:pointer;list-style:none;text-align:center;font:600 11.5px "Cinzel",Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);padding:8px 14px;border:1px solid rgba(201,169,98,.35);border-radius:9px;background:linear-gradient(180deg,var(--oak2),#221B16);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 3px rgba(0,0,0,.4)}
+.more summary::-webkit-details-marker{display:none}
+.more summary:hover{color:#E0C685;border-color:rgba(201,169,98,.6)}
+.more[open] summary{opacity:.65}
 .h3{font:600 10.5px "Cinzel",Georgia,serif;letter-spacing:.18em;text-transform:uppercase;color:#9A8668;margin:16px 0 9px}
 .lb2{display:flex;flex-direction:column;line-height:1.15}
 .lb2 b{font-size:13.5px;font-weight:600;color:var(--text)}
@@ -199,7 +209,7 @@ ul.plus li::marker{color:#A9BC6E}
 </div>
 <div class="cols">
 <div><div class="h3">MCP-парк — внешние серверы</div><!-- .row-бары из arsenal.top_mcp_servers, ember; скрыть если пусто --></div>
-<div><div class="h3">Файлы в работе</div><!-- .wch чипы из arsenal.top_extensions (.tsx ×N) --></div>
+<div><div class="h3">Файлы в работе — топ расширений</div><!-- .row-бары из arsenal.top_extensions (.tsx N), олива --></div>
 </div>
 
 <h2><!-- иконка секции -->Боевые повадки</h2>
@@ -216,7 +226,9 @@ ul.plus li::marker{color:#A9BC6E}
 <div><!-- .wch чипы слово ×count; скрыть если пусто --></div>
 
 <h2>Достижения, {{N}}</h2>
-<div class="chips"><!-- .ac карточки (сетка 3 кол.): инлайн-иконка (assets/achievement-icons, только path, fill=currentColor, фоны выбросить) + название цветом редкости + .rar + .fl флейвор + .cd условие. Всё видно сразу, БЕЗ тултипов --></div>
+<div class="chips"><!-- .ac карточки ТОЛЬКО legendary+epic (сетка 3 кол.): инлайн-иконка (assets/achievement-icons, только path, fill=currentColor, фоны выбросить) + название цветом редкости + .rar + .fl флейвор + .cd условие. БЕЗ тултипов --></div>
+<details class="more"><summary>Показать все достижения — ещё {{N}} (rare и common)</summary>
+<div class="chips" style="margin-top:10px"><!-- .ac карточки rare+common --></div></details>
 
 <h2 style="color:#A9BC6E">Сильное</h2>
 <ul class="plus"><!-- до 3 пунктов по правилам выбора --></ul>
