@@ -28,6 +28,8 @@ leaves your machine.
 - **Fun statuses** — a title built from your behavior (epithet + rank + level), 24 achievements from common to legendary, the rage gauge
 - **Research-backed advice** — every recommendation cites a verified source; refuted claims are listed too ([sources.md](references/sources.md))
 - **Progress between visits** — the skill remembers your last run (locally): come back in a week and see new achievements, level-ups and metric shifts
+- **Duel a friend** — exchange `profile.json` files and run `scripts/compare.py` for a versus card; the fixed scale makes it fair
+- **Deep-cut signals** — interruption rate, session boiling point, the werewolf index (night vs day profanity), your signature vocabulary
 - **Any period** — all time by default, or last week, last month, exact dates: your choice
 - **100% local and private** — stdlib-only Python, zero dependencies, no API keys, no network calls
 - **RU / EN** — lexicons and output in both languages

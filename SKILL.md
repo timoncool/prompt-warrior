@@ -75,5 +75,10 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
 - Respond in the user's language; RU/EN both supported end to end.
 - Fixed scale: same formulas for everyone, always cite `SCALE v1` version in the card footer.
 - Privacy: everything runs locally; nothing leaves the machine.
-- If the user asks to compare with friends: they run the same skill; identical scale
-  version = comparable results. Different scale versions are not comparable.
+- If the user asks to compare with friends: they run the same skill and exchange
+  profile.json files; then `python scripts/compare.py mine.json theirs.json` prints a
+  duel card. Identical scale version = comparable; the script warns otherwise.
+- Juicy v1.3 signals for narration when notable: interruptions_per_100 (impatience),
+  boiling_point_median + boiled_sessions_pct (how fast sessions heat up),
+  werewolf_ratio (night vs day profanity), signature_words (the user's own vocabulary —
+  present playfully, never judgementally).

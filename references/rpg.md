@@ -44,7 +44,7 @@ tie-break по порядку строк:
 | praise ≥ 8% | Щедрый | Openhanded |
 | default | Странствующий | Wandering |
 
-## Achievements (41, редкость по паттерну bronze/silver/gold + legendary)
+## Achievements (45, редкость по паттерну bronze/silver/gold + legendary)
 
 | ID | RU | EN | Rarity | Condition |
 |----|----|----|--------|-----------|
@@ -88,6 +88,10 @@ tie-break по порядку строк:
 | recruit | Новобранец | Recruit | common | первая неделя в логах |
 | night_lord | Владыка ночи | Lord of the Night | epic | ночь ≥ 50% (ступень от Ночного дозора) |
 | balanced | Уравновешенный | Even Keel | rare | ярость 5–40, негатив:похвала ≤ 3 |
+| stop_cord | Стоп-кран | Emergency Brake | rare | ≥ 8 прерываний на 100 реплик |
+| patient_one | Долготерпеливый | The Patient One | rare | < 1 прерывания на 100 при 300+ репликах |
+| short_fuse | Короткий фитиль | Short Fuse | epic | медианная первая вспышка ≤ 3-й реплики сессии |
+| werewolf | Оборотень | Werewolf | epic | ночной мат ≥ 1.5× дневного |
 
 Принцип прогрессии (по модели GitHub Achievements с тирами Bronze/Silver/Gold): часть ачивок
 образует лестницы — «Клуб ста» → «Тысяча голосов» (объём), «Спринтер» → «Романист» (стиль).

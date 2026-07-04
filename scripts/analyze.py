@@ -20,7 +20,7 @@ import re
 import sys
 from collections import Counter
 
-SCALE_VERSION = "v1.2"  # формулы метрик v1 не менялись; v1.1 расширил ачивки/эпитеты; v1.2 добавил шкалы-гейджи
+SCALE_VERSION = "v1.3"  # v1: базовые формулы; v1.1: +ачивки/эпитеты; v1.2: +гейджи; v1.3: +прерывания, точка кипения, оборотень, словарь
 
 # ---------------------------------------------------------------- extraction
 
@@ -60,12 +60,14 @@ def extract_text(entry):
     return text
 
 
-def collect(projects_dir, project=None):
+def collect(projects_dir, project=None, aux=None):
     pattern = os.path.join(projects_dir, project or "*", "*.jsonl")
     files = [f for f in glob.glob(pattern)
              if not os.path.basename(f).startswith("agent-")
              and os.path.basename(f) != "journal.jsonl"]
     seen_uuid, seen_text = set(), set()
+    if aux is not None:
+        aux.setdefault("interruptions", 0)
     messages = []  # dicts: text, words, voice, ts, session
     for path in files:
         session = os.path.basename(path)[:-6]
@@ -84,6 +86,14 @@ def collect(projects_dir, project=None):
                     continue
                 text = extract_text(entry)
                 if text is None:
+                    if aux is not None and entry.get("type") == "user":
+                        msg_ = entry.get("message") or {}
+                        c_ = msg_.get("content")
+                        t_ = c_ if isinstance(c_, str) else ""
+                        if isinstance(c_, list):
+                            t_ = " ".join(b.get("text", "") for b in c_ if isinstance(b, dict) and b.get("type") == "text")
+                        if t_.startswith("[Request interrupted"):
+                            aux["interruptions"] += 1
                     continue
                 uid = entry.get("uuid")
                 if uid and uid in seen_uuid:
@@ -185,6 +195,35 @@ def clamp(v, lo=0.0, hi=100.0):
     return max(lo, min(hi, v))
 
 
+STOPWORDS = set(('''это этот эта что чтобы как когда где только если тоже также надо нужно можно нельзя есть быть был была было были будет
+там тут здесь сейчас потом опять снова очень просто прямо давай давайте пусть пока ещё еще уже вот весь вся всё все всех даже
+или либо ведь разве почему зачем какой какая какое какие такой такая такое такие него неё них тебя тебе меня мне нами вами
+при про без над под перед после между через них наш ваш твой мой свой чтоб хочу хочешь хотим может можем должен должна должно
+them they this that with have from были чего кого кому чему делать сделать делает работает работать файл файлы код кода коде
+should would could there their about which после первый второй просто нормально правильно неправильно хорошо плохо
+будем буду пожалуйста спасибо когда всегда никогда'''
+).split())
+
+
+def signature_words(voice, top_n=8):
+    """Частотные слова юзера, не входящие в стоп-лист и лексиконы — «фирменный словарь»."""
+    word_re = re.compile(r"[а-яёa-z]{4,}")
+    counts = Counter()
+    for m in voice:
+        for tok in set(word_re.findall(m["text"].lower())):
+            if tok in STOPWORDS or LEX["imperative"].match(tok):
+                continue
+            if any(LEX[k].search(tok) for k in ("profanity", "insult", "politeness", "praise", "verify")):
+                continue
+            counts[tok] += 1
+    floor = max(5, len(voice) // 150)
+    return [{"word": w, "count": c} for w, c in counts.most_common(top_n * 3) if c >= floor][:top_n]
+
+
+def rage_marked(text):
+    return bool(LEX["profanity"].search(text) or LEX["caps"].search(text) or LEX["multipunct"].search(text))
+
+
 def compute_metrics(messages):
     voice = [m for m in messages if m["voice"]]
     n, nv = len(messages), len(voice)
@@ -253,6 +292,42 @@ def compute_metrics(messages):
                     if LEX["insult"].search(m["text"]) or LEX["multipunct"].search(m["text"]))
     praise_n = sum(1 for m in messages if LEX["praise"].search(m["text"]))
 
+    # точка кипения: номер первой реплики с маркером ярости, по сессиям (в порядке файла)
+    per_session = {}
+    for m in messages:
+        per_session.setdefault(m["session"], []).append(m)
+    boil_points = []
+    boiled = 0
+    for msgs_ in per_session.values():
+        if len(msgs_) < 5:
+            continue
+        for idx, m in enumerate(msgs_, 1):
+            if rage_marked(m["text"]):
+                boil_points.append(idx)
+                boiled += 1
+                break
+    rated_sessions = sum(1 for v in per_session.values() if len(v) >= 5)
+    boil_points.sort()
+    boiling_point = boil_points[len(boil_points) // 2] if boil_points else None
+
+    # оборотень: мат ночью (00-06) против дня (09-18), по локальному часу
+    def local_hour(m):
+        hm = re.match(r"\d{4}-\d{2}-\d{2}T(\d{2})", m["ts"])
+        return (int(hm.group(1)) + offset) % 24 if hm else None
+    n_prof = d_prof = n_tot = d_tot = 0
+    for m in messages:
+        h = local_hour(m)
+        if h is None:
+            continue
+        is_prof = bool(LEX["profanity"].search(m["text"]))
+        if 0 <= h <= 5:
+            n_tot += 1; n_prof += is_prof
+        elif 9 <= h <= 18:
+            d_tot += 1; d_prof += is_prof
+    werewolf = None
+    if n_tot >= 50 and d_tot >= 50 and d_prof:
+        werewolf = round((n_prof / n_tot) / (d_prof / d_tot), 2)
+
     lang_base = voice or messages
     ru_chars = sum(len(re.findall(r"[а-яё]", m["text"].lower())) for m in lang_base)
     lat_chars = sum(len(re.findall(r"[a-z]", m["text"].lower())) for m in lang_base)
@@ -297,6 +372,10 @@ def compute_metrics(messages):
                          "en": round(100.0 * lat_chars / (ru_chars + lat_chars or 1))},
         "top_imperatives": top_imperatives,
         "hours_local": [hours_local.get(h, 0) for h in range(24)],
+        "boiling_point_median": boiling_point,
+        "boiled_sessions_pct": round(100.0 * boiled / rated_sessions, 1) if rated_sessions else 0,
+        "werewolf_ratio": werewolf,
+        "signature_words": signature_words(voice),
     }
 
 
@@ -503,6 +582,14 @@ ACHIEVEMENTS = [
      lambda m, r: m["night_share_pct"] >= 50),
     ("balanced", "Уравновешенный", "Even Keel", "rare", "Держащий Баланс", "Holder of Balance",
      lambda m, r: 5 <= r <= 40 and (m["neg_to_praise_ratio"] or 0) <= 3 and m["messages"] >= 200),
+    ("stop_cord", "Стоп-кран", "Emergency Brake", "rare", "Обрывающий на Полуслове", "Cutter of Mid-Sentences",
+     lambda m, r: m.get("interruptions_per_100", 0) >= 8),
+    ("patient_one", "Долготерпеливый", "The Patient One", "rare", "Дослушивающий", "The One Who Lets It Finish",
+     lambda m, r: m.get("interruptions_per_100", 99) < 1 and m["messages"] >= 300),
+    ("short_fuse", "Короткий фитиль", "Short Fuse", "epic", "Вспыхивающий Мгновенно", "The Instant Spark",
+     lambda m, r: m.get("boiling_point_median") is not None and m["boiling_point_median"] <= 3),
+    ("werewolf", "Оборотень", "Werewolf", "epic", "Меняющийся в Полночь", "The Midnight Turner",
+     lambda m, r: (m.get("werewolf_ratio") or 0) >= 1.5),
 ]
 
 
@@ -636,6 +723,14 @@ ACHIEVEMENT_DESCS = {
                    "Night is not a watch, it is your shift", "≥ 50% of activity between midnight and 6 a.m."),
     "balanced": ("Ровный тон, ровный темп — редчайший профиль", "ярость 5–40, негатив к похвале ≤ 3, от 200 реплик",
                  "Even tone, even tempo", "rage 5-40, negativity:praise <= 3 across 200+ messages"),
+    "stop_cord": ("Модель ещё пишет, а вы уже знаете, что не то", "≥ 8 прерываний на 100 реплик",
+                  "The model is still typing, but you already know it is wrong", "≥ 8 interruptions per 100 messages"),
+    "patient_one": ("Дослушиваете до конца — даже когда не согласны", "< 1 прерывания на 100 реплик при 300+ репликах",
+                    "You let it finish, even when you disagree", "< 1 interruption per 100 messages across 300+"),
+    "short_fuse": ("Искра — с третьей реплики сессии", "медианная первая вспышка ≤ 3-й реплики сессии",
+                   "The spark comes by message three", "median first flare-up at message ≤ 3 of a session"),
+    "werewolf": ("После полуночи вами пишет кто-то другой", "ночной мат чаще дневного в ≥ 1.5 раза",
+                 "Someone else types through you after midnight", "night profanity ≥ 1.5x the daytime rate"),
 }
 
 
@@ -656,8 +751,11 @@ def compute_achievements(m, rage):
     return earned
 
 
-def build_profile(messages):
+def build_profile(messages, aux=None):
     m = compute_metrics(messages)
+    n_int = (aux or {}).get("interruptions", 0)
+    m["interruptions"] = n_int
+    m["interruptions_per_100"] = round(100.0 * n_int / m["messages"], 1) if m["messages"] else 0
     if m["messages"] < 30:
         return {"error": "not_enough_data", "messages": m["messages"],
                 "note": "Need at least 30 user messages for a profile."}
@@ -775,7 +873,7 @@ def append_snapshot(profile):
 # верификации их логов (см. README, Cross-harness).
 SOURCES = {
     "claude-code": {
-        "collect": lambda d, proj: collect(d, proj),
+        "collect": lambda d, proj, aux=None: collect(d, proj, aux),
         "default_dir": os.path.join("~", ".claude", "projects"),
     },
 }
@@ -798,9 +896,10 @@ def main():
 
     src = SOURCES[args.source]
     logs_dir = args.projects_dir or os.path.expanduser(src["default_dir"])
-    messages = src["collect"](logs_dir, args.project)
+    aux = {}
+    messages = src["collect"](logs_dir, args.project, aux)
     messages = filter_by_range(messages, args.days, args.date_from, args.date_to)
-    profile = build_profile(messages)
+    profile = build_profile(messages, aux)
     if "metrics" in profile:
         profile["range"] = {"days": args.days, "from": args.date_from, "to": args.date_to,
                             "mode": ("last_%d_days" % args.days) if args.days
