@@ -10,6 +10,8 @@
 1. **Каждое число появляется на карточке ровно один раз.** Поздние секции ссылаются
    на ранние словами («медиана — в Объёме», «см. маркеры»), не перепечатывают.
 2. Замечание про исследования тона — один раз, в подписи шкалы «Ярость». Больше нигде.
+2г. Роли инструментов НИКОГДА не подаются голыми словами («оператор 34%») — только бар
+   с двухстрочной подписью: имя роли + пояснение, какие инструменты в неё входят.
 2б-икон. Иконки секций: каждый <h2> открывается инлайн-SVG из assets/section-icons/
    (16px, только <path> с fill="currentColor", фоновый прямоугольник выбрасывать; цвет
    наследуется латунный). Маппинг секция→файл — в assets/section-icons/ATTRIBUTION.md.
@@ -132,6 +134,13 @@ a{color:var(--brass);text-decoration:none;border-bottom:1px dotted var(--brass-d
 .ac .fl{font-size:12.5px;color:#C0AF9A;line-height:1.4;margin-top:3px}
 .ac .cd{font-size:11.5px;color:var(--mut);font-style:italic;margin-top:2px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:4px 36px;align-items:start}
+.h3{font:600 10.5px "Cinzel",Georgia,serif;letter-spacing:.18em;text-transform:uppercase;color:#9A8668;margin:16px 0 9px}
+.lb2{display:flex;flex-direction:column;line-height:1.15}
+.lb2 b{font-size:13.5px;font-weight:600;color:var(--text)}
+.lb2 i{font-style:normal;font-size:10.5px;color:#8F7E6B}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #2E2620;font-size:13.5px}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600;text-align:right;color:#D5C9B8}
 .ch{position:relative;cursor:default;border-radius:15px;padding:3px 13px;font-size:13px;background:linear-gradient(180deg,var(--oak2),#221B16);border:1px solid;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 2px 3px rgba(0,0,0,.4)}
 .ch .tip{visibility:hidden;opacity:0;transition:opacity .18s;position:absolute;bottom:135%;left:50%;transform:translateX(-50%);width:268px;z-index:9;background:linear-gradient(175deg,#2E2620,#241D18);border:1px solid #55483A;border-radius:9px;padding:11px 14px;font-size:12.5px;line-height:1.5;color:var(--text);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 10px 30px rgba(0,0,0,.65);white-space:normal}
 .ch .tip:after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:#55483A}
@@ -182,15 +191,26 @@ ul.plus li::marker{color:#A9BC6E}
 
 <h2><!-- иконка секции -->Экономика и арсенал</h2>
 <div class="grid6"><!-- 6 тайлов: токены / кэш-эфф / вызовы / инструменты / проекты / PR; секцию скрыть если economy null --></div>
-<div class="muted"><!-- строка 1: топ-3 инструмента · доли категорий · MCP% --></div>
-<div class="muted"><!-- строка 2: MCP-парк (arsenal.top_mcp_servers) · файлы (arsenal.top_extensions) · самая дорогая сессия (arsenal.top_sessions[0]) --></div>
+<div class="cols">
+<div><div class="h3">Топ инструментов</div><!-- .row-бары: топ-5 из arsenal.top_tools (mcp__X__tool → короткое имя), латунь --></div>
+<div><div class="h3">Стиль работы — вызовы по ролям</div><!-- .row-бары с двухстрочными подписями .lb2:
+Оператор (консоль: Bash, PowerShell) · Хирург (правки кода: Edit, Write) · Археолог (чтение и поиск: Read, Grep) ·
+Кукловод (MCP: внешние серверы) · Прочее (остаток до 100%). НИКОГДА не показывать роль без пояснения --></div>
+</div>
+<div class="cols">
+<div><div class="h3">MCP-парк — внешние серверы</div><!-- .row-бары из arsenal.top_mcp_servers, ember; скрыть если пусто --></div>
+<div><div class="h3">Файлы в работе</div><!-- .wch чипы из arsenal.top_extensions (.tsx ×N) --></div>
+</div>
 
 <h2><!-- иконка секции -->Боевые повадки</h2>
 <div class="grid6"><!-- 12 тайлов (2 ряда): прерывания/100 · точка кипения №N (+% вскипевших) · оборотень ×K ·
 скриншоты/100 · дабл-тексты/100 · вызовы субагентов · «нет»-открытия % · код-свитчинг % ·
 вопрос-микс (что/как/почему %) · ошибки инструментов % · thinking-доля % · число ачивок.
 Тайлы с null-метрикой (напр. оборотень без ночной выборки) — опускать --></div>
-<div class="muted"><!-- строка: конюшня моделей (arsenal.models) · вход (arsenal.entrypoints) · план-режим · версий CC за период --></div>
+<div class="cols">
+<div><div class="h3">Конюшня — ответы по моделям</div><!-- .row-бары из arsenal.models (человекочитаемые имена: claude-opus-4-8 → Опус 4.8), латунь --></div>
+<div><div class="h3">Сетап</div><!-- .kv строки: вход (arsenal.entrypoints) · план-режим · версий CC · самая дорогая сессия (arsenal.top_sessions[0]) --></div>
+</div>
 
 <h2><!-- иконка секции -->Словарь воина</h2>
 <div><!-- .wch чипы слово ×count; скрыть если пусто --></div>
