@@ -37,16 +37,17 @@ In any Claude Code session:
 
 or just ask: *"построй мой AI-профиль"* / *"build my AI collaboration profile"*.
 
-You get:
-- **Character card** — inline widget + self-contained `ai-profile.html` you can open,
-  screenshot and share;
-- **Six stats** — STR directiveness, DEX iteration tempo, CON intensity, INT context
-  richness, WIS verification, CHA diplomacy — plus the RAGE meter;
-- **Class of 15** (top-2 stats), epithet, level, up to 24 achievements (common → legendary);
-- **Avatar** — procedural SVG out of the box; optional AI avatar via [Puter.js](https://developer.puter.com/)
-  (no developer keys, user-pays model);
+You get one card — a serious analytical portrait with RPG flavor woven in:
+- **The analytics** (the substance): volume, top imperatives, tone markers, activity by
+  hour, strengths and weaknesses derived strictly from your numbers;
+- **The flavor**: fun RPG title as the headline, six D&D stats in a compact strip
+  (STR directiveness, DEX tempo, CON endurance, INT context, WIS verification,
+  CHA diplomacy), the RAGE meter, up to 24 achievements (common → legendary);
+- **Avatar** — a real AI-generated character portrait from your profile
+  (free open generator; final endpoint selection in progress);
 - **3-6 personalized recommendations**, each backed by published research or Anthropic docs
-  (see [references/recommendations.md](references/recommendations.md)).
+  (see [references/recommendations.md](references/recommendations.md));
+- Inline widget + self-contained `ai-profile.html` you can open, screenshot and share.
 
 ## Fair play
 

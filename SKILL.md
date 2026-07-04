@@ -30,19 +30,20 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
      needed; stop.
    - `"low_confidence": true` (< 100 messages) → include a visible "small sample" caveat.
 
-3. **Render the character card** following `references/widget.md`:
+3. **Render the analytical card** following `references/widget.md`. One card, one
+   product: the substance is the analytics (volume, imperatives, tone markers, activity
+   hours, strengths/weaknesses, recommendations); the RPG layer (title, achievements,
+   avatar) is flavor woven into it — never the other way around.
    - If an inline widget tool is available in this environment, render it inline.
    - Always also write a self-contained `ai-profile.html` to the working directory and
      tell the user the path (they can open it in a browser and screenshot/share it).
-   - The card includes a procedural SVG avatar (recipe in widget.md) that always works
-     offline. The HTML file additionally offers an optional AI-avatar button via Puter.js
-     (no developer keys; the user signs into a free Puter account — user-pays model).
-     Use `avatar_prompt` from profile.json for the image prompt.
+   - Avatar: a real AI-generated portrait from `avatar_prompt` (generator selection
+     pending — see widget.md). Never substitute letter-SVGs, icons or placeholder art.
 
 4. **Explain the profile** in the user's conversation language (the widget carries both
-   RU and EN labels from profile.json). Walk through: title, class and what drove it
-   (top-2 stats), the most notable metrics behind each stat, achievements earned.
-   Numbers verbatim from profile.json.
+   RU and EN labels from profile.json). Lead with what the numbers say — notable
+   metrics, strengths and weaknesses; then the flavor: title, class (top-2 stats),
+   achievements. Numbers verbatim from profile.json.
 
 5. **Give recommendations** using `references/recommendations.md`: pick the entries whose
    trigger conditions match the profile, present 3-6 of them, each with its evidence note.
