@@ -58,7 +58,7 @@
 ## HTML-шаблон (заполнить плейсхолдеры {{...}}, списки — по образцу строки)
 
 ```html
-<!doctype html><html lang="{{lang}}"><head><meta charset="utf-8"><title>AI Collab Profile</title><style>
+<!doctype html><html lang="{{lang}}"><head><meta charset="utf-8"><title>Prompt Warrior</title><style>
 :root{--bg:#0d0b12;--card:#151021;--panel:#1e1731;--line:#2c2440;--text:#ece8f4;--mut:#928aa8;--acc:#8b5cf6;--gold:#f59e0b}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font:15px/1.6 "Segoe UI",system-ui,sans-serif;display:flex;justify-content:center;padding:28px;margin:0}
@@ -103,7 +103,7 @@ ul.plus li::marker{color:#22c55e}
 .foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;display:flex;justify-content:space-between}
 </style></head><body><div class="card">
 
-<div class="muted">AI Collab Profile</div>
+<div class="muted">Prompt Warrior</div>
 <h1>{{title в языке юзера}}</h1>
 <div class="muted" style="margin-top:6px">{{N реплик · N слов · N сессий · даты · N реплик/активный день}}</div>
 <!-- если low_confidence: жёлтая плашка «Мало данных (<100 реплик) — профиль ориентировочный» -->

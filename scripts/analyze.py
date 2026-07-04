@@ -568,7 +568,7 @@ def filter_by_range(messages, days=None, date_from=None, date_to=None):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="AI Collab Profile analyzer (SCALE %s)" % SCALE_VERSION)
+    ap = argparse.ArgumentParser(description="Prompt Warrior analyzer (SCALE %s)" % SCALE_VERSION)
     ap.add_argument("--projects-dir", default=os.path.expanduser(os.path.join("~", ".claude", "projects")))
     ap.add_argument("--project", default=None, help="single project dir name (default: all)")
     ap.add_argument("--days", type=int, default=None,
