@@ -97,6 +97,24 @@ Prompt Warrior — агентский скилл, который читает л
 
 ## Быстрый старт
 
+**Ленивый вариант — одно сообщение.** Вставь это в Claude Code целиком — он сам всё
+установит и прогонит:
+
+```text
+Установи скилл Prompt Warrior с гитхаба и сразу прогони его по полной.
+
+Установка:
+git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"
+(Linux/macOS: git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior)
+
+Дальше следуй SKILL.md установленного скилла как обычный пользователь:
+профиль за всё время, HTML-карточка + открой её в браузере,
+инлайн-виджет, разбор профиля и рекомендации.
+Ничего не изобретай сверх скилла.
+```
+
+**Или по шагам:**
+
 1. **Клонировать**
    ```powershell
    git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"

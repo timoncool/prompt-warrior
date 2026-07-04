@@ -96,6 +96,23 @@ button, hover unlock conditions and the achievements accordion:
 
 ## Quick Start
 
+**The lazy way — one message.** Paste this into Claude Code and it installs and runs
+everything by itself:
+
+```text
+Install the Prompt Warrior skill from GitHub and run it end to end.
+
+Install:
+git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior
+(Windows PowerShell: git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior")
+
+Then follow the installed skill's SKILL.md as a regular user: all-time profile,
+HTML card + open it in the browser, inline widget, profile breakdown and
+recommendations. Don't invent anything beyond the skill.
+```
+
+**Or step by step:**
+
 1. **Clone**
    ```bash
    git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior
