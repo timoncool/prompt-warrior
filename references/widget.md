@@ -100,7 +100,7 @@
 4а. Идентичность: строка под титулом «{класс} · {раса} ({доля}% реплик)» из profile.identity;
    расу опускать если identity.race == null; класс есть всегда.
 4б. Аватар: если рядом с карточкой есть avatar.png (scripts/avatar.py, robohash) —
-   <img src="avatar.png"> слева в шапке, 120-140px, скруглённый. Файла нет — шапка без
+   <img src="avatar.png"> слева в шапке, 150-160px, скруглённый. Файла нет — шапка без
    картинки; заглушки, буквы и иконки вместо аватара ЗАПРЕЩЕНЫ.
 4в. Иконки ачивок: assets/achievement-icons/<id>.svg, при отсутствии — _<rarity>.svg
    (game-icons.net CC-BY-3.0, атрибуция в ATTRIBUTION.md). КРУПНО, как настоящая ачивка:
@@ -109,6 +109,11 @@
    красится цветом редкости), текст справа (.atx). Карточки не растягивать по высоте
    ряда (align-items:start) — без пустот.
 5. Числа — из profile.json как есть, без округлений и смягчений.
+6. «Хроника воина» — секция сразу после дельта-полосы: 2-4 абзаца (~100-180 слов),
+   которые МОДЕЛЬ пишет сама по profile.json (см. SKILL.md, шаг 3а): характеристика /
+   мини-биография в тоне летописи с лёгким юмором. Факты только из профиля, БЕЗ чисел
+   (правило №1), нейтрально к значениям метрик. Оформление: .chron с буквицей,
+   1-2 акцента <em>.
 
 ## Выбор пунктов «Сильное» (до 3, в этом порядке приоритета)
 
@@ -177,11 +182,15 @@ h2:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--bra
 .muted{color:var(--mut);font-size:13px}
 a{color:var(--brass);text-decoration:none;border-bottom:1px dotted var(--brass-dim)}a:hover{color:#E0C685}
 .head{display:flex;gap:20px;align-items:center;padding-bottom:16px;border-bottom:1px solid rgba(201,169,98,.25);position:relative}
-.head img{width:112px;height:112px;border-radius:12px;border:2px solid rgba(201,169,98,.4);background:#171310;box-shadow:0 3px 10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);flex:none}
+.head img{width:156px;height:156px;border-radius:14px;border:2px solid rgba(201,169,98,.4);background:#171310;box-shadow:0 3px 10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);flex:none}
 .ident{font:600 13px "Cinzel",Georgia,serif;letter-spacing:.08em;color:var(--brass)}
 .lvl{flex:none;text-align:center;padding:11px 13px;border:1px solid rgba(201,169,98,.4);border-radius:10px;background:linear-gradient(180deg,#2B231D,#1E1813);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 3px 8px rgba(0,0,0,.45)}
 .lvl b{display:block;font:600 22px "Cinzel",Georgia,serif;color:var(--brass);letter-spacing:.04em}
 .lvl span{display:block;font-size:10px;color:var(--mut);letter-spacing:.14em;text-transform:uppercase;margin-top:2px}
+.chron{font-size:15px;line-height:1.65;color:#D5C9B8}
+.chron p{margin:0 0 10px}
+.chron p:first-child:first-letter{font-family:"Cormorant Garamond",Georgia,serif;font-size:34px;font-weight:700;color:var(--brass);float:left;line-height:1;margin:2px 7px 0 0}
+.chron em{color:var(--brass);font-style:italic}
 .dstrip{margin-top:12px;padding:6px 13px;border:1px solid #3A312A;border-radius:8px;font-size:13px;color:var(--mut);background:rgba(37,30,25,.7)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
 .grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
@@ -260,6 +269,9 @@ ul.plus li::marker{color:#A9BC6E}
 </div>
 <div class="dstrip">{{полоса прогресса из profile.delta — только если есть изменения}}</div>
 
+<h2><!-- иконка секции (quill-ink) -->Хроника воина</h2>
+<div class="chron"><!-- 2-4 <p> авторского текста модели (правило 6); первая буква — буквица --></div>
+
 <h2><!-- иконка секции -->Объём реплик</h2>
 <div class="grid"><!-- 4 тайла: слов в среднем / медиана / короткие / спеки --></div>
 
@@ -322,6 +334,9 @@ ul.plus li::marker{color:#A9BC6E}
 
 Зеркалит сгенерированную карточку 1:1 — те же секции, те же числа, тот же выбор
 сильного/слабого; оформление — токенами хост-системы. Ничего не изобретать.
+Обязательно: кнопка «Открыть HTML-карточку». Хосты обычно НЕ открывают file://-ссылки
+из виджета, поэтому кнопка должна вызывать sendPrompt('Открой <абсолютный путь>/ai-profile.html
+в браузере') — модель откроет файл системной командой. Прямую file://-ссылку не использовать.
 Обязательно: кнопка/ссылка «Открыть HTML-карточку» на сгенерированный файл
 (`file:///<абсолютный путь>/ai-profile.html`) — рядом со ссылкой на GitHub в футере.
 

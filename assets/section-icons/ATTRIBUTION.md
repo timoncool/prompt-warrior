@@ -6,7 +6,7 @@ licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 Authors: Lorc (scroll-unfurled, crossed-swords, sands-of-time, scales, laurels,
 muscle-up, paw-print, broken-bone), Delapouite (two-coins, spell-book),
-Carl Olsen (flame).
+Carl Olsen (flame). Also Lorc: quill-ink (Warrior's Chronicle section).
 
 Artwork is unmodified except color, handled at render time via `fill="currentColor"`
 (the background rectangle path is stripped).
@@ -14,4 +14,4 @@ Artwork is unmodified except color, handled at render time via `fill="currentCol
 Section mapping: scroll-unfurled → Объём реплик · crossed-swords → Топ императивов ·
 flame → Маркеры тона · sands-of-time → Часы активности · scales → Шкалы ·
 two-coins → Экономика и арсенал · paw-print → Боевые повадки · spell-book → Словарь воина ·
-laurels → Достижения · muscle-up → Сильное · broken-bone → Слабое и что делать.
+laurels → Достижения · muscle-up → Сильное · broken-bone → Слабое и что делать · quill-ink → Хроника воина.

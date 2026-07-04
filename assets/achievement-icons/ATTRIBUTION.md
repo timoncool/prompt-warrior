@@ -10,3 +10,6 @@ time (fill=currentColor).
 
 Avatar monsters are generated locally by the [robohash](https://github.com/e1ven/Robohash)
 package (MIT); monster art set2 by Hrvoje Novakovic (CC BY 3.0).
+
+Project emblem: `assets/swords-emblem.svg` by Lorc (game-icons.net, CC BY 3.0) —
+used with a PW monogram in `assets/logo.svg`, the card favicon and the footer seal.

@@ -51,6 +51,14 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
    card simply renders without an image — NEVER substitute placeholders, letters or
    icons in its place. The monster evolves when the title changes — mention it.
 
+3а. **Write the Warrior's Chronicle** («Хроника воина») — 2-4 paragraphs (~100-180
+   words) that YOU, the model, author from profile.json: a characterization /
+   mini-biography of the user in the grimoire-chronicle voice with light humor. Rules:
+   facts strictly from the profile (no inventions), NO numbers (numbers live in the
+   card sections — each number appears exactly once), neutral to metric values (do not
+   shame, do not flatter), 1-2 <em> accents max, written in the card's language. This
+   is the one place the model speaks freely — make it feel written, not generated.
+
 4. **Build and SHOW the card** — output degrades gracefully, in this order:
    a. Fill the template from `references/widget.md` with profile.json data EXACTLY as
       it prescribes (same CSS, same section order, rule-picked strengths and
