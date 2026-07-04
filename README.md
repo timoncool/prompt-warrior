@@ -19,7 +19,8 @@ Prompt Warrior is a Claude Code skill that analyzes your local session logs and 
 you actually communicate with AI — real numbers on a fixed scale, comparable between
 people. You get a shareable card with your stats, a fun title, achievements with rarity,
 and research-backed prompting advice. Runs 100% locally on stdlib Python, nothing ever
-leaves your machine.
+leaves your machine — the optional monster avatar is assembled offline from image layers
+bundled inside the `robohash` package (robohash.org is never contacted).
 
 ## Features
 
@@ -31,6 +32,8 @@ leaves your machine.
 - **Duel a friend** — exchange `profile.json` files and run `scripts/compare.py` for a versus card; the fixed scale makes it fair
 - **Deep-cut signals** — interruption rate, session boiling point, the werewolf index (night vs day profanity), your signature vocabulary
 - **Economy & arsenal** — tokens burned and cache efficiency, your tool profile (operator / surgeon / archaeologist), models, projects, PRs shipped
+- **Monster avatars, fully local** — a deterministic creature from your title (evolves with your title), assembled offline by the optional `robohash` package; no network, no API
+- **Achievement icons** — vendored SVGs from [game-icons.net](https://game-icons.net) (CC-BY-3.0, see assets/achievement-icons/ATTRIBUTION.md)
 - **Cross-harness aware** — known session-log formats for Codex CLI, OpenCode, Gemini CLI and Copilot documented in [references/harnesses.md](references/harnesses.md)
 - **Any period** — all time by default, or last week, last month, exact dates: your choice
 - **100% local and private** — stdlib-only Python, zero dependencies, no API keys, no network calls
@@ -116,4 +119,7 @@ I build open-source software and do AI research. Most of what I create is free a
 
 ## License
 
-[MIT](LICENSE)
+Code: [MIT](LICENSE). Achievement icons: [game-icons.net](https://game-icons.net) authors,
+CC-BY-3.0 ([attribution](assets/achievement-icons/ATTRIBUTION.md)). Monster art (set2)
+by Hrvoje Novakovic, CC-BY-3.0, assembled locally by the MIT-licensed
+[robohash](https://github.com/e1ven/Robohash) package.
