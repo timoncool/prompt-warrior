@@ -129,8 +129,10 @@ button, hover unlock conditions and the achievements accordion:
 - No browser, no widget? The card falls back to plain text right in the console.
 
 Under the hood: `scripts/analyze.py` reads `~/.claude/projects` JSONL logs (read-only),
-deduplicates your messages, computes metrics and writes `profile.json`; Claude then
-builds the card from the template in [references/widget.md](references/widget.md).
+deduplicates your messages, computes metrics and writes `profile.json`; Claude authors
+only the chronicle and the strengths/weaknesses picks (`content.json`), and
+`scripts/render.py` builds the whole card from them — the model never hand-writes
+HTML or reads SVG.
 
 ## Documentation
 

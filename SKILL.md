@@ -60,13 +60,22 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
    is the one place the model speaks freely — make it feel written, not generated.
 
 4. **Build and SHOW the card** — output degrades gracefully, in this order:
-   a. Fill the template from `references/widget.md` with profile.json data EXACTLY as
-      it prescribes (same CSS, same section order, rule-picked strengths and
-      weakness→fix pairs, every number printed exactly once) and write
-      `ai-profile.html` to the working directory. Tell the user the path.
-      NEVER Read .svg asset files into context — `scripts/icons.py` prints ready
-      inline SVG for every icon, the favicon and the seal (widget.md, rule 2д);
-      call it from your build script.
+   a. You do NOT write HTML/CSS/SVG. Write `content.json` — ONLY your authored parts,
+      in the card language:
+      ```json
+      {"chronicle": ["<p1>", "<p2>", "<p3>"],
+       "strengths": ["..."],
+       "weaknesses": [{"w": "...", "a": "...", "ev": "...", "url": "https://..."}]}
+      ```
+      (chronicle = step 3а; strengths ≤3 and weakness→fix pairs ≤4 picked by the rules
+      in `references/widget.md`). Then run the canonical renderer:
+      ```
+      python scripts/render.py profile.json --content content.json --lang ru -o ai-profile.html
+      ```
+      (`--lang en` for English — labels are symmetric, data fields are bilingual.)
+      It fills the whole card: numbers exactly once, bars, gauges, icons, favicon,
+      seal, achievements accordion, avatar if `avatar.png` exists. Tell the user the
+      path. NEVER Read .svg asset files into context (widget.md, rule 2д).
    b. OPEN it for the user: if a preview panel/tool is available, open it there;
       otherwise open in the default browser (`start` on Windows, `open` on macOS,
       `xdg-open` on Linux). Do not make the user open the file by hand.

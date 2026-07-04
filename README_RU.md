@@ -131,7 +131,8 @@ Prompt Warrior — агентский скилл, который читает л
 
 Под капотом: `scripts/analyze.py` читает JSONL-логи из `~/.claude/projects` (только
 чтение), дедуплицирует ваши реплики, считает метрики и пишет `profile.json`; Claude
-собирает карточку по шаблону из [references/widget.md](references/widget.md).
+пишет только хронику и выбор сильного/слабого (`content.json`), а всю карточку из них
+собирает `scripts/render.py` — модель не пишет HTML руками и не читает SVG.
 
 ## Документация
 
