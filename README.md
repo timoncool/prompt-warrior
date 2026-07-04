@@ -100,11 +100,11 @@ button, hover unlock conditions and the achievements accordion:
 everything by itself:
 
 ```text
-Install the Prompt Warrior skill from GitHub and run it end to end.
+Install the Prompt Warrior skill and run it end to end.
 
-Install:
-git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior
-(Windows PowerShell: git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior")
+Install: git clone https://github.com/timoncool/prompt-warrior into YOUR OWN
+skills directory, named prompt-warrior (for Claude Code that is
+~/.claude/skills/; other harnesses — wherever your skills live).
 
 Then follow the installed skill's SKILL.md as a regular user: all-time profile,
 HTML card + open it in the browser, inline widget, profile breakdown and

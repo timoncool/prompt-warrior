@@ -103,9 +103,9 @@ Prompt Warrior — агентский скилл, который читает л
 ```text
 Установи скилл Prompt Warrior с гитхаба и сразу прогони его по полной.
 
-Установка:
-git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"
-(Linux/macOS: git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior)
+Установка: git clone https://github.com/timoncool/prompt-warrior в СВОЮ
+директорию скиллов, папкой prompt-warrior (у Claude Code это ~/.claude/skills/;
+другой харнесс — куда он кладёт скиллы).
 
 Дальше следуй SKILL.md установленного скилла как обычный пользователь:
 профиль за всё время, HTML-карточка + открой её в браузере,
