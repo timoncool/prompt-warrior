@@ -10,6 +10,8 @@
 1. **Каждое число появляется на карточке ровно один раз.** Поздние секции ссылаются
    на ранние словами («медиана — в Объёме», «см. маркеры»), не перепечатывают.
 2. Замечание про исследования тона — один раз, под градусом ярости. Больше нигде.
+2а. Все упоминания источников (arxiv, Anthropic docs) — КЛИКАБЕЛЬНЫЕ <a href>, не голый текст.
+2б. Каждый чип ачивки несёт title с редкостью и условием (данные — desc_ru/desc_en из profile.json).
 3. Никаких картинок: ни аватаров, ни иконок, ни SVG, ни base64, ни внешних ресурсов.
 4. Отдельной секции «Рекомендации» НЕТ — советы живут парами в «Слабое → что делать».
 5. Числа — из profile.json как есть, без округлений и смягчений.
@@ -65,6 +67,8 @@ h1{font:600 24px/1.3 Georgia,serif;margin:2px 0 4px;letter-spacing:.2px}
 h2{font-size:12px;margin:26px 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.14em;display:flex;align-items:center;gap:10px}
 h2:after{content:"";flex:1;height:1px;background:var(--line)}
 .muted{color:var(--mut);font-size:13px}
+a{color:#9f8fef;text-decoration:none;border-bottom:1px dotted #5b4d85}
+a:hover{color:#c4b5fd}
 .alt{color:var(--gold);font-size:13px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .tile{background:var(--panel);border-radius:12px;padding:11px 14px}
@@ -124,9 +128,9 @@ ul.plus li::marker{color:#22c55e}
 <div style="display:flex;justify-content:space-between" class="muted"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>
 <div><h2>Градус ярости: {{rage}} / 100</h2>
 <div class="rage"><s style="left:{{rage}}%"></s></div>
-<div class="muted" style="font-size:11px;margin-top:5px">{{подпись по бакету:
-  rage ≥ 60 → «на качество ответов почти не влияет (агрегатный эффект тона ≈ 0 — arxiv 2508.00614, 2512.12812) — но жрёт токены без диагностики»
-  20–59   → «умеренный градус; тон почти не влияет на качество ответов (arxiv 2508.00614)»
+<div class="muted" style="font-size:11px;margin-top:5px">{{подпись по бакету — ссылки ВСЕГДА кликабельные <a href>:
+  rage ≥ 60 → «на качество ответов почти не влияет (агрегатный эффект тона ≈ 0 — <a href="https://arxiv.org/abs/2508.00614">arxiv 2508.00614</a>, <a href="https://arxiv.org/html/2512.12812v1">2512.12812</a>) — но жрёт токены без диагностики»
+  20–59   → «умеренный градус; тон почти не влияет на качество ответов (<a href="https://arxiv.org/abs/2508.00614">arxiv 2508.00614</a>)»
   < 20    → «дзен-режим: усилители (капс, мат, !!!) почти не используются»}}</div></div>
 </div>
 
@@ -134,7 +138,8 @@ ul.plus li::marker{color:#22c55e}
 <div class="chips">
 <!-- чип на каждую ачивку, цвет рамки/текста по редкости:
      legendary #f59e0b/#fbbf24 · epic #a855f7/#c084fc · rare #3b82f6/#93c5fd · common #9aa0a6/#b6bbc2 -->
-<span class="ch" style="border-color:{{c1}};color:{{c2}}">{{название}}</span>
+<span class="ch" style="border-color:{{c1}};color:{{c2}}" title="{{rarity}} · {{desc_ru|desc_en из profile.json}}">{{название}}</span>
+<!-- title ОБЯЗАТЕЛЕН на каждом чипе: при наведении юзер видит редкость и условие ачивки -->
 </div>
 
 <h2 style="color:#86c98a">Сильное</h2>
@@ -142,7 +147,7 @@ ul.plus li::marker{color:#22c55e}
 
 <h2 style="color:#e08b8b">Слабое → что делать</h2>
 <!-- до 4 пар по правилам выбора выше -->
-<div class="fix"><div class="w">{{слабость}}</div><div class="a">→ {{что делать}}</div><div class="ev">{{пруф/практика}}</div></div>
+<div class="fix"><div class="w">{{слабость}}</div><div class="a">→ {{что делать}}</div><div class="ev">{{пруф — с кликабельной ссылкой: Anthropic docs → <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">…</a>, context rot → <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">…</a>, arxiv → прямые ссылки; «практика» — без ссылки}}</div></div>
 
 <div class="foot muted"><span>SCALE v1 · ai-collab-profile</span><span>github.com/timoncool/ai-collab-profile</span></div>
 </div></body></html>

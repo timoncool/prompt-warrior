@@ -403,6 +403,48 @@ ACHIEVEMENTS = [
 ]
 
 
+ACHIEVEMENT_DESCS = {
+    # id -> (описание+условие RU, EN)
+    "sprinter": ("Медиана набранной реплики ≤ 8 слов — командуете коротко",
+                 "Median typed message ≤ 8 words — you command briefly"),
+    "novelist": ("≥ 3% реплик длиннее 200 слов — настоящие спеки",
+                 "≥ 3% of messages over 200 words — real specs"),
+    "trust_verify": ("«Проверь» и родня в ≥ 10% реплик",
+                     "Verify-requests in ≥ 10% of messages"),
+    "capslock": ("КАПС в ≥ 20% реплик", "CAPS in ≥ 20% of messages"),
+    "night_watch": ("≥ 30% активности между 00:00 и 06:00",
+                    "≥ 30% of activity between midnight and 6 a.m."),
+    "marathon": ("Сессия на 300+ реплик", "A single session of 300+ messages"),
+    "eruption": ("≥ 40 матов на 1000 слов", "≥ 40 profanities per 1000 words"),
+    "agent_bane": ("Оскорбления ассистента в ≥ 20% реплик",
+                   "Insults aimed at the assistant in ≥ 20% of messages"),
+    "surgeon": ("Самокоррекция в ≥ 4% реплик — курс правится на лету",
+                "Self-correction in ≥ 4% of messages — course fixed mid-flight"),
+    "librarian": ("≥ 3% реплик про память, правила и скиллы",
+                  "≥ 3% of messages about memory, rules and skills"),
+    "sisyphus": ("Стопы + категоричные требования в сумме ≥ 8% реплик",
+                 "Stops + categorical demands ≥ 8% of messages combined"),
+    "tyrant": ("Негативные сигналы превышают похвалу в ≥ 10 раз",
+               "Negative signals outnumber praise ≥ 10:1"),
+    "saint": ("Вежливость ≥ 5% при мате < 1 на 1000 слов",
+              "Politeness ≥ 5% with profanity < 1 per 1000 words"),
+    "interrogator": ("Вопросы в ≥ 30% реплик", "Questions in ≥ 30% of messages"),
+    "why_child": ("«Почему/зачем» в ≥ 8% реплик", "Why-questions in ≥ 8% of messages"),
+    "daily_grind": ("Активность ≥ 75% дней на отрезке от двух недель",
+                    "Active ≥ 75% of days over a 14+ day span"),
+    "hundred_club": ("100+ реплик в корпусе", "100+ messages in the corpus"),
+    "thousand_voices": ("1000+ реплик в корпусе", "1000+ messages in the corpus"),
+    "epic_wall": ("В среднем ≥ 30 слов на реплику", "≥ 30 words per message on average"),
+    "polyglot": ("Набранные реплики: 25–75% кириллицы — два языка в ходу",
+                 "Typed messages 25–75% Cyrillic — two languages in play"),
+    "zen": ("Ярость ≤ 5 при 300+ репликах", "Rage ≤ 5 across 300+ messages"),
+    "volcano_heart": ("Ярость ≥ 85 из 100", "Rage ≥ 85 out of 100"),
+    "categorical_imperative": ("«Всегда/никогда/обязательно» в ≥ 8% реплик",
+                               "Always/never/must in ≥ 8% of messages"),
+    "gentle_soul": ("Похвала в ≥ 5% реплик", "Praise in ≥ 5% of messages"),
+}
+
+
 def compute_achievements(m, rage):
     earned = []
     for aid, ru, en, rarity, suf_ru, suf_en, cond in ACHIEVEMENTS:
@@ -411,8 +453,10 @@ def compute_achievements(m, rage):
         except Exception:
             ok = False
         if ok:
+            desc_ru, desc_en = ACHIEVEMENT_DESCS.get(aid, ("", ""))
             earned.append({"id": aid, "ru": ru, "en": en, "rarity": rarity,
-                           "suffix_ru": suf_ru, "suffix_en": suf_en})
+                           "suffix_ru": suf_ru, "suffix_en": suf_en,
+                           "desc_ru": desc_ru, "desc_en": desc_en})
     earned.sort(key=lambda a: -RARITY_ORDER[a["rarity"]])
     return earned
 
