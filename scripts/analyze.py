@@ -653,6 +653,72 @@ def filter_by_range(messages, days=None, date_from=None, date_to=None):
     return [m for m in messages if m["ts"] and lo <= m["ts"][:10] <= hi]
 
 
+HISTORY_PATH = os.path.expanduser(os.path.join("~", ".claude", "prompt-warrior", "history.jsonl"))
+
+SNAPSHOT_METRICS = ["messages", "total_words", "median_words_voice", "verify_pct",
+                    "self_correction_pct", "politeness_pct", "praise_pct",
+                    "profanity_per_1000_words", "insult_pct", "caps_pct",
+                    "night_share_pct", "long_share_pct", "question_pct"]
+
+
+def load_history():
+    try:
+        with open(HISTORY_PATH, encoding="utf-8") as fh:
+            return [json.loads(line) for line in fh if line.strip()]
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+def compute_delta(profile, history):
+    """Compare against the previous all-time snapshot; None on first run."""
+    if not history:
+        return None
+    prev = history[-1]
+    m = profile["metrics"]
+    cur_ach = {a["id"] for a in profile["achievements"]}
+    new_ach = [a for a in profile["achievements"] if a["id"] not in set(prev.get("achievements", []))]
+    metric_changes = {}
+    for key in SNAPSHOT_METRICS:
+        was = prev.get("metrics", {}).get(key)
+        now = m.get(key)
+        if was is not None and now is not None and was != now:
+            metric_changes[key] = {"from": was, "to": now}
+    return {
+        "since": prev.get("date"),
+        "runs_recorded": len(history),
+        "level": {"from": prev.get("level"), "to": profile["level"]},
+        "rage": {"from": prev.get("rage"), "to": profile["rage"]},
+        "title_changed": prev.get("title_ru") != profile["title"]["ru"],
+        "prev_title": prev.get("title_ru"),
+        "messages_added": m["messages"] - prev.get("metrics", {}).get("messages", m["messages"]),
+        "new_achievements": new_ach,
+        "lost_achievements": sorted(set(prev.get("achievements", [])) - cur_ach),
+        "metric_changes": metric_changes,
+    }
+
+
+def append_snapshot(profile):
+    m = profile["metrics"]
+    snap = {
+        "date": m["date_to"],
+        "scale_version": profile["scale_version"],
+        "level": profile["level"],
+        "rage": profile["rage"],
+        "title_ru": profile["title"]["ru"],
+        "achievements": [a["id"] for a in profile["achievements"]],
+        "metrics": {k: m[k] for k in SNAPSHOT_METRICS},
+    }
+    os.makedirs(os.path.dirname(HISTORY_PATH), exist_ok=True)
+    history = load_history()
+    if history and history[-1].get("date") == snap["date"]:
+        history[-1] = snap  # повторный прогон в тот же день — заменить, не плодить
+    else:
+        history.append(snap)
+    with open(HISTORY_PATH, "w", encoding="utf-8") as fh:
+        for item in history:
+            fh.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Prompt Warrior analyzer (SCALE %s)" % SCALE_VERSION)
     ap.add_argument("--projects-dir", default=os.path.expanduser(os.path.join("~", ".claude", "projects")))
@@ -662,6 +728,8 @@ def main():
     ap.add_argument("--date-from", default=None, help="YYYY-MM-DD, inclusive")
     ap.add_argument("--date-to", default=None, help="YYYY-MM-DD, inclusive")
     ap.add_argument("-o", "--output", default=None, help="write JSON to file (default: stdout)")
+    ap.add_argument("--no-history", action="store_true",
+                    help="do not read/write the local progress history")
     args = ap.parse_args()
 
     messages = collect(args.projects_dir, args.project)
@@ -671,6 +739,11 @@ def main():
         profile["range"] = {"days": args.days, "from": args.date_from, "to": args.date_to,
                             "mode": ("last_%d_days" % args.days) if args.days
                                     else ("custom" if (args.date_from or args.date_to) else "all_time")}
+        # прогресс между визитами: только для сравнимых all-time прогонов
+        if profile["range"]["mode"] == "all_time" and not args.no_history:
+            history = load_history()
+            profile["delta"] = compute_delta(profile, history)
+            append_snapshot(profile)
     out = json.dumps(profile, ensure_ascii=False, indent=2)
     if args.output:
         with open(args.output, "w", encoding="utf-8") as fh:

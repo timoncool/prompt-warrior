@@ -45,9 +45,13 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
    additionally render an inline widget mirroring the same sections and numbers.
 
 4. **Explain the profile** in the user's conversation language (the widget carries both
-   RU and EN labels from profile.json). Lead with what the numbers say — notable
-   metrics, strengths and weaknesses; then the flavor: title (epithet + rank + level),
-   achievements. Numbers verbatim from profile.json.
+   RU and EN labels from profile.json). If `profile.delta` is present and non-null,
+   LEAD with what changed since the last visit — new achievements first (that is the
+   share-worthy moment: «получена новая ачивка!»), then level/title changes, then the
+   2-3 most notable metric shifts with direction. Then the numbers: notable metrics,
+   strengths and weaknesses; then the flavor: title, achievements. Always surface 1-2
+   non-obvious insights — the most extreme or most characteristic numbers in the
+   profile, phrased as discoveries, not judgements. Numbers verbatim from profile.json.
 
 5. **Give recommendations** using `references/recommendations.md`: pick the entries whose
    trigger conditions match the profile, present 3-6 of them, each with its evidence note.
@@ -58,7 +62,9 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
 
 ## Rules
 
-- Read-only with respect to user logs. The only files written: `profile.json`, `ai-profile.html`.
+- Read-only with respect to user logs. Files written: `profile.json`, `ai-profile.html`,
+  and the local progress history `~/.claude/prompt-warrior/history.jsonl` (all-time runs
+  only; disable with `--no-history`). History never leaves the machine.
 - Respond in the user's language; RU/EN both supported end to end.
 - Fixed scale: same formulas for everyone, always cite `SCALE v1` version in the card footer.
 - Privacy: everything runs locally; nothing leaves the machine.
