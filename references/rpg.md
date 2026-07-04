@@ -1,32 +1,32 @@
-# RPG system — classes, epithets, achievements
+# Fun statuses — ranks, epithets, achievements
 
-Все условия зафиксированы в `scripts/analyze.py` (SCALE v1). Тут — справочник для
-рендера и объяснений. / All conditions are frozen in `analyze.py`; this is the render
-and narration reference.
+Геймификация без RPG-цирка: никаких классов и стат-листов. Прикольный титул, уровень,
+ачивки с редкостью — приправа к аналитике. Все условия зафиксированы в
+`scripts/analyze.py` (SCALE v1); тут — справочник для рендера и нарратива.
 
-## Class = top-2 stats (15 combinations)
+## Title
 
-| Top-2 | RU | EN | Flavor |
-|-------|----|----|--------|
-| STR+DEX | Берсерк | Berserker | быстрые короткие команды, шквал директив |
-| STR+CON | Варвар | Barbarian | напор + марафоны, сила через объём |
-| STR+INT | Полководец | Warlord | командует развёрнутыми приказами |
-| STR+WIS | Инквизитор | Inquisitor | приказывает и проверяет каждый шаг |
-| STR+CHA | Паладин | Paladin | директивен, но учтив |
-| DEX+CON | Следопыт | Ranger | быстрые итерации день за днём |
-| DEX+INT | Плут | Rogue | короткие точные уколы с контекстом |
-| DEX+WIS | Монах | Monk | быстрый, но осознанный |
-| DEX+CHA | Бард | Bard | лёгкий тон, быстрый темп |
-| CON+INT | Артификер | Artificer | долгие сессии над большими спеками |
-| CON+WIS | Друид | Druid | выносливость + рефлексия |
-| CON+CHA | Вождь | Chieftain | ведёт долго и дипломатично |
-| INT+WIS | Архимаг | Archmage | глубокий контекст + верификация |
-| INT+CHA | Чародей | Sorcerer | богатый контекст, мягкая подача |
-| WIS+CHA | Клирик | Cleric | проверяет и благодарит |
+`{Эпитет} {Звание} {N} уровня[, {суффикс топ-ачивки}]`
+`{Epithet} {Rank}, level {N}[, {top achievement suffix}]`
 
-Tie-break: при равенстве статов приоритет по порядку STR, DEX, CON, INT, WIS, CHA.
+Суффикс добавляется только если самая редкая ачивка — epic или legendary.
+Пример: «Неистовый Командир Терминала 89 уровня, Железная Длань».
 
-## Epithet (first match wins)
+## Rank — звание по доминирующему поведению
+
+Выбирается по наибольшему внутреннему поведенческому индексу (см. scale.md);
+tie-break по порядку строк:
+
+| Индекс | RU | EN |
+|--------|----|----|
+| command (директивность) | Командир Терминала | Terminal Commander |
+| tempo (темп правок) | Мастер Молниеносных Правок | Master of Lightning Edits |
+| endurance (марафоны) | Марафонец Сессий | Session Marathoner |
+| context (спеки) | Архитектор Спек | Spec Architect |
+| verification (проверки) | Верховный Ревизор | High Auditor |
+| diplomacy (вежливость) | Дипломат Машин | Machine Diplomat |
+
+## Epithet (первое сработавшее условие)
 
 | Condition | RU | EN |
 |-----------|----|----|
@@ -38,16 +38,7 @@ Tie-break: при равенстве статов приоритет по пор
 | profanity ≥ 30/1000 | Сквернословящий | Foul-mouthed |
 | default | Странствующий | Wandering |
 
-## Title
-
-`{Epithet} {Class} {level} уровня` / `{Epithet} {Class}, level {level}`;
-if the rarest earned achievement is epic or legendary, its suffix is appended
-(e.g. «Железная Длань» / "The Iron Fist").
-
-## Achievements (24, by rarity)
-
-Rarity tiers follow the proven bronze/silver/gold pattern (Stack Overflow) extended with
-legendary: **common → rare → epic → legendary**.
+## Achievements (24, редкость по паттерну bronze/silver/gold + legendary)
 
 | ID | RU | EN | Rarity | Condition |
 |----|----|----|--------|-----------|
@@ -76,5 +67,5 @@ legendary: **common → rare → epic → legendary**.
 | saint | Святой | Saint | legendary | politeness ≥ 5% and profanity < 1/1000 |
 | volcano_heart | Сердце вулкана | Volcano Heart | legendary | RAGE ≥ 85 |
 
-Narration tip: legendary/epic first, mention 1-2 funniest common ones last. Never shame —
-achievements are flavor, including Tyrant and Eruption (see recommendations.md for tone facts).
+Нарратив: сначала legendary/epic, в конце 1-2 самых смешных common. Не стыдить —
+ачивки это флейвор, включая «Тирана» (см. recommendations.md про влияние тона).

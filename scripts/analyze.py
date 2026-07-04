@@ -3,7 +3,7 @@
 """AI Collab Profile — analyzer (SCALE v1).
 
 Reads Claude Code JSONL session logs, computes fixed-scale communication metrics,
-derives an RPG character sheet (stats, class, epithet, title, level, achievements).
+derives fun statuses (rank, epithet, title, level, achievements) as flavor on top.
 Stdlib only. Deterministic. RU/EN lexicons.
 
 Usage:
@@ -255,54 +255,48 @@ def compute_metrics(messages):
 
 
 # ---------------------------------------------------------------- SCALE v1
+# Behavioral indexes (0-100, internal): used only to pick the fun rank; the card shows
+# raw metrics, never these as a "stat sheet".
 
-def compute_stats(m):
+def compute_indexes(m):
     active_days_pct = 100.0 * m["active_days"] / m["span_days"] if m["span_days"] else 0
-    stats = {
-        "STR": clamp(m["imperatives_per_100_voice"] * 2),
-        "DEX": clamp(m["quick_share_pct"] * 1.4),
-        "CON": clamp(0.35 * clamp(m["messages_per_active_day"])
-                     + 0.35 * clamp(active_days_pct)
-                     + 0.30 * clamp(m["night_share_pct"] * 2.5)),
-        "INT": clamp(0.4 * clamp(m["median_words_all"] * 2.5)
-                     + 0.4 * clamp(m["long_share_pct"] * 20)
-                     + 0.2 * clamp(m["structured_share_pct"] * 5)),
-        "WIS": clamp(0.5 * clamp(m["verify_pct"] * 6)
-                     + 0.25 * clamp(m["self_correction_pct"] * 25)
-                     + 0.25 * clamp(m["why_pct"] * 8)),
-        "CHA": clamp(50 + m["politeness_pct"] * 10 + m["praise_pct"] * 5
-                     - m["insult_pct"] * 2 - m["profanity_per_1000_words"] * 0.5),
+    indexes = {
+        "command": clamp(m["imperatives_per_100_voice"] * 2),
+        "tempo": clamp(m["quick_share_pct"] * 1.4),
+        "endurance": clamp(0.35 * clamp(m["messages_per_active_day"])
+                           + 0.35 * clamp(active_days_pct)
+                           + 0.30 * clamp(m["night_share_pct"] * 2.5)),
+        "context": clamp(0.4 * clamp(m["median_words_all"] * 2.5)
+                         + 0.4 * clamp(m["long_share_pct"] * 20)
+                         + 0.2 * clamp(m["structured_share_pct"] * 5)),
+        "verification": clamp(0.5 * clamp(m["verify_pct"] * 6)
+                              + 0.25 * clamp(m["self_correction_pct"] * 25)
+                              + 0.25 * clamp(m["why_pct"] * 8)),
+        "diplomacy": clamp(50 + m["politeness_pct"] * 10 + m["praise_pct"] * 5
+                           - m["insult_pct"] * 2 - m["profanity_per_1000_words"] * 0.5),
     }
-    stats = {k: round(v) for k, v in stats.items()}
+    indexes = {k: round(v) for k, v in indexes.items()}
     rage = round(clamp(m["profanity_per_1000_words"] * 1.5
                        + m["caps_pct"] + m["multipunct_pct"]))
-    return stats, rage
+    return indexes, rage
 
 
-CLASSES = {
-    frozenset(["STR", "DEX"]): ("Берсерк", "Berserker"),
-    frozenset(["STR", "CON"]): ("Варвар", "Barbarian"),
-    frozenset(["STR", "INT"]): ("Полководец", "Warlord"),
-    frozenset(["STR", "WIS"]): ("Инквизитор", "Inquisitor"),
-    frozenset(["STR", "CHA"]): ("Паладин", "Paladin"),
-    frozenset(["DEX", "CON"]): ("Следопыт", "Ranger"),
-    frozenset(["DEX", "INT"]): ("Плут", "Rogue"),
-    frozenset(["DEX", "WIS"]): ("Монах", "Monk"),
-    frozenset(["DEX", "CHA"]): ("Бард", "Bard"),
-    frozenset(["CON", "INT"]): ("Артификер", "Artificer"),
-    frozenset(["CON", "WIS"]): ("Друид", "Druid"),
-    frozenset(["CON", "CHA"]): ("Вождь", "Chieftain"),
-    frozenset(["INT", "WIS"]): ("Архимаг", "Archmage"),
-    frozenset(["INT", "CHA"]): ("Чародей", "Sorcerer"),
-    frozenset(["WIS", "CHA"]): ("Клирик", "Cleric"),
+RANKS = {
+    # dominant index -> fun rank (RU, EN, avatar visual descriptor)
+    "command": ("Командир Терминала", "Terminal Commander", "fierce battle commander"),
+    "tempo": ("Мастер Молниеносных Правок", "Master of Lightning Edits", "lightning-fast duelist"),
+    "endurance": ("Марафонец Сессий", "Session Marathoner", "unstoppable marathon warrior"),
+    "context": ("Архитектор Спек", "Spec Architect", "wise arcane architect"),
+    "verification": ("Верховный Ревизор", "High Auditor", "all-seeing inquisitive auditor"),
+    "diplomacy": ("Дипломат Машин", "Machine Diplomat", "charismatic envoy"),
 }
 
-STAT_ORDER = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+INDEX_ORDER = ["command", "tempo", "endurance", "context", "verification", "diplomacy"]
 
 
-def pick_class(stats):
-    top2 = sorted(STAT_ORDER, key=lambda k: (-stats[k], STAT_ORDER.index(k)))[:2]
-    return CLASSES[frozenset(top2)], top2
+def pick_rank(indexes):
+    top = sorted(INDEX_ORDER, key=lambda k: (-indexes[k], INDEX_ORDER.index(k)))[0]
+    return RANKS[top], top
 
 
 def pick_epithet(m, rage):
@@ -396,32 +390,31 @@ def build_profile(messages):
     if m["messages"] < 30:
         return {"error": "not_enough_data", "messages": m["messages"],
                 "note": "Need at least 30 user messages for a profile."}
-    stats, rage = compute_stats(m)
-    (cls_ru, cls_en), top2 = pick_class(stats)
+    indexes, rage = compute_indexes(m)
+    (rank_ru, rank_en, rank_visual), top_index = pick_rank(indexes)
     ep_ru, ep_en = pick_epithet(m, rage)
     level = max(1, min(99, int(math.sqrt(m["total_words"]) / 5)))
     achievements = compute_achievements(m, rage)
     suffix = achievements[0] if achievements else None
-    title_ru = "%s %s %d уровня" % (ep_ru, cls_ru, level)
-    title_en = "%s %s, level %d" % (ep_en, cls_en, level)
+    title_ru = "%s %s %d уровня" % (ep_ru, rank_ru, level)
+    title_en = "%s %s, level %d" % (ep_en, rank_en, level)
     if suffix and RARITY_ORDER[suffix["rarity"]] >= 2:
         title_ru += ", " + suffix["suffix_ru"]
         title_en += ", " + suffix["suffix_en"]
     avatar_prompt = (
-        "fantasy RPG character portrait, %s %s, level %d, "
-        "%s, %s, detailed digital painting, dramatic lighting, character sheet style"
-        % (ep_en.lower(), cls_en.lower(), level,
-           "surrounded by glowing terminal screens and magic code runes",
+        "epic fantasy character portrait, %s %s at a glowing computer battlestation, "
+        "floating terminal screens with magic code runes, %s, "
+        "highly detailed digital painting, dramatic cinematic lighting"
+        % (ep_en.lower(), rank_visual,
            "night scene" if m["night_share_pct"] >= 30 else "workshop scene")
     )
     return {
         "scale_version": SCALE_VERSION,
         "low_confidence": m["messages"] < 100,
         "metrics": m,
-        "stats": stats,
+        "indexes": indexes,
         "rage": rage,
-        "top_stats": top2,
-        "class": {"ru": cls_ru, "en": cls_en},
+        "rank": {"ru": rank_ru, "en": rank_en, "key": top_index},
         "epithet": {"ru": ep_ru, "en": ep_en},
         "level": level,
         "title": {"ru": title_ru, "en": title_en},

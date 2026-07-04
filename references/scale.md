@@ -14,19 +14,23 @@ implemented in `scripts/analyze.py` and frozen. Changing any constant = a new sc
   actual typed commands, unpolluted by pasted specs/logs.
 - Subagent transcripts (`agent-*.jsonl`) and `journal.jsonl` are excluded.
 
-## Stats (0–100 each)
+## Behavioral indexes (0–100, internal)
 
-| Stat | Meaning | Formula (clamped to 0–100) |
-|------|---------|----------------------------|
-| STR — Сила / Strength | Directiveness | imperatives per 100 voice messages × 2 |
-| DEX — Ловкость / Dexterity | Iteration tempo | % of voice messages ≤ 12 words × 1.4 |
-| CON — Выносливость / Constitution | Intensity | 0.35 × min(100, messages per active day) + 0.35 × (% active days in span) + 0.30 × min(100, night share % × 2.5) |
-| INT — Интеллект / Intelligence | Context richness | 0.4 × min(100, median words per message × 2.5) + 0.4 × min(100, % messages ≥ 100 words × 20) + 0.2 × min(100, % messages with code/URL × 5) |
-| WIS — Мудрость / Wisdom | Verification & reflection | 0.5 × min(100, verify % × 6) + 0.25 × min(100, self-correction % × 25) + 0.25 × min(100, why-questions % × 8) |
-| CHA — Харизма / Charisma | Diplomacy | clamp(50 + politeness % × 10 + praise % × 5 − insults % × 2 − profanity per 1000 words × 0.5) |
+Internal scores used ONLY to pick the fun rank in the title — the card shows raw metrics,
+never an RPG stat sheet:
 
-**RAGE — Ярость / Fury** (bonus meter, not a stat): min(100, profanity per 1000 words × 1.5
-+ CAPS-messages % + multi-punctuation % ). Night share uses local-time hours 00:00–05:59.
+| Index | Meaning | Formula (clamped to 0–100) |
+|-------|---------|----------------------------|
+| command | Directiveness | imperatives per 100 voice messages × 2 |
+| tempo | Iteration tempo | % of voice messages ≤ 12 words × 1.4 |
+| endurance | Intensity | 0.35 × min(100, messages per active day) + 0.35 × (% active days in span) + 0.30 × min(100, night share % × 2.5) |
+| context | Context richness | 0.4 × min(100, median words per message × 2.5) + 0.4 × min(100, % messages ≥ 100 words × 20) + 0.2 × min(100, % messages with code/URL × 5) |
+| verification | Verification & reflection | 0.5 × min(100, verify % × 6) + 0.25 × min(100, self-correction % × 25) + 0.25 × min(100, why-questions % × 8) |
+| diplomacy | Diplomacy | clamp(50 + politeness % × 10 + praise % × 5 − insults % × 2 − profanity per 1000 words × 0.5) |
+
+**Ярость / RAGE meter** (shown on the card as a fun gauge): min(100, profanity per 1000
+words × 1.5 + CAPS-messages % + multi-punctuation %). Night share uses local-time hours
+00:00–05:59.
 
 ## Level
 

@@ -11,7 +11,7 @@ Numbers verbatim from profile.json. Footer: `SCALE v1 · ai-collab-profile`.
 ## Card sections (in order)
 
 1. **Header**: AI-generated avatar (left, see Avatar below) + fun RPG title as the
-   headline («Неистовый Варвар 89 уровня, Железная Длань») + corpus line
+   headline («Неистовый Командир Терминала 89 уровня, Железная Длань») + corpus line
    (messages · words · sessions · date range · messages/active day; "low confidence"
    ribbon if flagged).
 2. **Volume** — metric tiles: words/message, median message length, share of ≤12-word
@@ -21,8 +21,8 @@ Numbers verbatim from profile.json. Footer: `SCALE v1 · ai-collab-profile`.
 4. **Tone markers** — bars with % of messages: verify, profanity, CAPS, multi-punct,
    politeness, praise, insults, self-correction. Facts, not judgment.
 5. **Activity by hour** — 24 thin columns, night hours highlighted.
-6. **D&D stats strip** — the six stats in ONE compact row (value + 2-word meaning)
-   plus a thin RAGE bar. Flavor-sized, not dominating.
+6. **Rage gauge** — a thin green→red bar («градус ярости») with a one-line fun caption.
+   No stat blocks, no D&D strips anywhere on the card.
 7. **Achievements** — one row of small chips with rarity colors (common #9aa0a6,
    rare #3b82f6, epic #a855f7, legendary #f59e0b). Earned only.
 8. **Strengths / weaknesses** — 2-3 bullets each, derived strictly from the numbers

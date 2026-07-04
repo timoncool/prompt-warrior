@@ -6,12 +6,13 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![RU/EN](https://img.shields.io/badge/lang-RU%20%2F%20EN-orange)](#русский)
 
-Turn your Claude Code history into an RPG character sheet. The skill analyzes your local
-session logs and builds a psychological portrait of how you work with AI — six D&D-style
-stats on a **fixed scale** (comparable between people), a class, a title, achievements
-with rarity, an avatar, and evidence-based prompt-engineering recommendations.
+Turn your Claude Code history into a gamified analytical portrait. The skill analyzes
+your local session logs and shows how you actually work with AI — real numbers on a
+**fixed scale** (comparable between people), a fun title, a level, achievements with
+rarity, an AI-generated avatar, and evidence-based prompt-engineering recommendations.
+Not an RPG character sheet: the analytics are the product, the statuses are the garnish.
 
-> **Furious Barbarian, level 89, The Iron Fist** — STR 93 · CON 90 · DEX 79 · WIS 45 · INT 41 · CHA 4 · RAGE 81
+> **Furious Terminal Commander, level 89, The Iron Fist** — rage 82/100 · «проверь» is imperative #2 · negativity:praise 24:1
 
 ## Install
 
@@ -40,9 +41,8 @@ or just ask: *"построй мой AI-профиль"* / *"build my AI collabo
 You get one card — a serious analytical portrait with RPG flavor woven in:
 - **The analytics** (the substance): volume, top imperatives, tone markers, activity by
   hour, strengths and weaknesses derived strictly from your numbers;
-- **The flavor**: fun RPG title as the headline, six D&D stats in a compact strip
-  (STR directiveness, DEX tempo, CON endurance, INT context, WIS verification,
-  CHA diplomacy), the RAGE meter, up to 24 achievements (common → legendary);
+- **The statuses** (the garnish): fun title as the headline (epithet + rank + level),
+  the rage gauge, up to 24 achievements (common → legendary);
 - **Avatar** — a real AI-generated character portrait via [AI Horde](https://aihorde.net)
   (open volunteer GPU network: free, anonymous, no registration, no tokens);
 - **3-6 personalized recommendations**, each backed by published research or Anthropic docs
@@ -53,21 +53,22 @@ You get one card — a serious analytical portrait with RPG flavor woven in:
 
 The scale is a contract: formulas and thresholds are frozen per version
 ([SCALE v1](references/scale.md)). Everyone is measured identically — that's what makes
-profiles comparable. Yes, even if your CHA turns out to be 4.
+profiles comparable. Yes, even if your rage gauge hits 82/100.
 
 ## Privacy
 
-Everything runs locally; log content never leaves your machine. The optional AI avatar
-sends only a short generated prompt (class/epithet words) to the image service.
+Everything runs locally; log content never leaves your machine. Avatar generation
+sends only a short generated prompt (title words, no log text) to AI Horde.
 
 ---
 
 ## Русский
 
-Скилл для Claude Code: превращает историю ваших сессий в RPG-лист персонажа. Локальный
-анализ логов → психологический портрет стиля работы с ИИ: шесть статов по **фиксированной
-шкале** (сравнимой между людьми), класс, титул, ачивки с редкостью, аватар и рекомендации
-по промпт-инженерингу с опорой на исследования.
+Скилл для Claude Code: геймифицированный аналитический портрет вашего стиля работы с ИИ.
+Локальный анализ логов → реальные цифры по **фиксированной шкале** (сравнимой между
+людьми), прикольный титул, уровень, ачивки с редкостью, AI-аватар и рекомендации по
+промпт-инженерингу с опорой на исследования. Это не RPG-лист персонажа: аналитика —
+продукт, статусы — приправа.
 
 **Установка:** команда `git clone` выше (папка `~/.claude/skills/ai-collab-profile`).
 Нужен только Python 3.8+, без зависимостей и ключей.
@@ -75,10 +76,10 @@ sends only a short generated prompt (class/epithet words) to the image service.
 **Запуск:** `/ai-collab-profile` или просто «построй мой AI-профиль» в любой сессии.
 
 **Честная игра:** формулы шкалы заморожены ([SCALE v1](references/scale.md)) — все
-измеряются одинаково, поэтому профили можно сравнивать. Да, даже если ваша Харизма — 4.
+измеряются одинаково, поэтому профили можно сравнивать. Да, даже если градус ярости — 82.
 
 **Приватность:** всё локально; наружу может уйти только короткий промпт аватара
-(слова класса и эпитета), и только по явной кнопке.
+(слова титула, не логи) — в AI Horde при генерации.
 
 ## Structure
 

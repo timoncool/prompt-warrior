@@ -5,13 +5,14 @@ description: Use when the user wants to analyze their communication style with A
 
 # AI Collab Profile
 
-Builds an RPG-style character sheet of the user's AI collaboration style from their local
-Claude Code JSONL logs: six D&D-like stats on a FIXED scale (comparable between people),
-a class, an epithet, a title, a level, achievements with rarity, an avatar, and
-evidence-based prompt-engineering recommendations.
+Builds a gamified analytical portrait of the user's AI collaboration style from their
+local Claude Code JSONL logs: real metrics on a FIXED scale (comparable between people)
+plus fun statuses — a title, a level, achievements with rarity, an AI-generated avatar —
+and evidence-based prompt-engineering recommendations. It is NOT an RPG character sheet:
+no classes, no stat blocks; the analytics are the product, the statuses are the garnish.
 
 **The scale is a contract.** All formulas and thresholds live in `scripts/analyze.py`
-(SCALE v1) and `references/scale.md`. NEVER adjust formulas, thresholds, class mappings,
+(SCALE v1) and `references/scale.md`. NEVER adjust formulas, thresholds, rank mappings,
 or achievement conditions per user — comparability is the whole point. If a metric looks
 unflattering, it stays. Report numbers only from `profile.json`, never invent or soften them.
 
@@ -49,7 +50,7 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
 
 5. **Explain the profile** in the user's conversation language (the widget carries both
    RU and EN labels from profile.json). Lead with what the numbers say — notable
-   metrics, strengths and weaknesses; then the flavor: title, class (top-2 stats),
+   metrics, strengths and weaknesses; then the flavor: title (epithet + rank + level),
    achievements. Numbers verbatim from profile.json.
 
 6. **Give recommendations** using `references/recommendations.md`: pick the entries whose
