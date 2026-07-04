@@ -1,92 +1,109 @@
+<div align="center">
+
 # Prompt Warrior
 
-[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-8b5cf6)](https://code.claude.com/docs/en/skills)
-[![Scale](https://img.shields.io/badge/scale-v1-blue)](references/scale.md)
-[![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](scripts/analyze.py)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![RU/EN](https://img.shields.io/badge/lang-RU%20%2F%20EN-orange)](#русский)
+**Turn your Claude Code logs into a gamified analytical portrait of how you work with AI.**
 
-**Prompt Warrior** — turn your Claude Code history into a gamified analytical portrait. The skill analyzes
-your local session logs and shows how you actually work with AI — real numbers on a
-**fixed scale** (comparable between people), a fun title, a level, achievements with
-rarity, and evidence-based prompt-engineering recommendations.
-Not an RPG character sheet: the analytics are the product, the statuses are the garnish.
+[![License](https://img.shields.io/github/license/timoncool/prompt-warrior?style=flat-square)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/timoncool/prompt-warrior?style=flat-square)](https://github.com/timoncool/prompt-warrior/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/timoncool/prompt-warrior?style=flat-square)](https://github.com/timoncool/prompt-warrior/commits)
+[![Python](https://img.shields.io/badge/python-3.8%2B%20stdlib--only-3776AB?style=flat-square)](scripts/analyze.py)
 
-> **Furious Terminal Commander, level 89, The Iron Fist** — rage 82/100 · «проверь» is imperative #2 · negativity:praise 24:1
+**[English](README.md)** · **[Русский](README_RU.md)**
 
-## Install
+![Prompt Warrior card](docs/screenshots/hero.png)
 
-```bash
-git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior
-```
+</div>
 
-Windows (PowerShell):
+Prompt Warrior is a Claude Code skill that analyzes your local session logs and shows how
+you actually communicate with AI — real numbers on a fixed scale, comparable between
+people. You get a shareable card with your stats, a fun title, achievements with rarity,
+and research-backed prompting advice. Runs 100% locally on stdlib Python, nothing ever
+leaves your machine.
 
-```powershell
-git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"
-```
+## Features
 
-That's it. Python 3.8+ (stdlib only), no dependencies, no API keys, no network calls.
+- **Fixed scale (SCALE v1)** — frozen formulas and thresholds, everyone is measured identically, profiles are comparable
+- **Real analytics** — message volume, top imperatives, tone markers, activity by hour, strengths and weak spots derived strictly from your numbers
+- **Fun statuses** — a title built from your behavior (epithet + rank + level), 24 achievements from common to legendary, the rage gauge
+- **Research-backed advice** — every recommendation cites a verified source; refuted claims are listed too ([sources.md](references/sources.md))
+- **Any period** — all time by default, or last week, last month, exact dates: your choice
+- **100% local and private** — stdlib-only Python, zero dependencies, no API keys, no network calls
+- **RU / EN** — lexicons and output in both languages
 
-## Use
+## Quick Start
 
-In any Claude Code session:
+1. **Clone**
+   ```bash
+   git clone https://github.com/timoncool/prompt-warrior ~/.claude/skills/prompt-warrior
+   ```
+   Windows (PowerShell):
+   ```powershell
+   git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"
+   ```
 
-```
-/prompt-warrior
-```
+2. **Ask Claude Code**
+   ```
+   /prompt-warrior
+   ```
+   or just say: *"build my prompt warrior profile"*.
 
-or just ask: *"построй мой промпт-профиль"* / *"build my prompt warrior profile"* —
-optionally with a period: *"за неделю"*, *"for the last month"*, *"с 1 по 30 июня"*.
-Default is all time; the range is always your choice (`--days N`, `--date-from/--date-to`).
+3. **Get your card** — an inline widget plus a self-contained `ai-profile.html` you can
+   open, screenshot and share.
 
-You get one card — a serious analytical portrait with RPG flavor woven in:
-- **The analytics** (the substance): volume, top imperatives, tone markers, activity by
-  hour, strengths and weaknesses derived strictly from your numbers;
-- **The statuses** (the garnish): fun title as the headline (epithet + rank + level),
-  the rage gauge, up to 24 achievements (common → legendary);
-- **3-6 personalized recommendations**, each backed by published research or Anthropic docs
-  (see [references/recommendations.md](references/recommendations.md));
-- Inline widget + self-contained `ai-profile.html` you can open, screenshot and share.
+## Usage
 
-## Fair play
+- *"build my prompt warrior profile"* — all-time profile
+- *"my prompt profile for the last week"* — last 7 days
+- *"профиль за июнь"* — exact date range
+- The period is always your choice; the skill never picks one silently.
 
-The scale is a contract: formulas and thresholds are frozen per version
-([SCALE v1](references/scale.md)). Everyone is measured identically — that's what makes
-profiles comparable. Yes, even if your rage gauge hits 82/100.
+Under the hood: `scripts/analyze.py` reads `~/.claude/projects` JSONL logs (read-only),
+deduplicates your messages, computes metrics and writes `profile.json`; Claude then
+builds the card from the template in [references/widget.md](references/widget.md).
 
-## Privacy
+## Documentation
 
-Everything runs locally; nothing ever leaves your machine.
+- [SCALE v1 — frozen formulas](references/scale.md)
+- [Ranks, epithets, achievements](references/rpg.md)
+- [Metric-triggered recommendations](references/recommendations.md)
+- [Evidence base with verification verdicts](references/sources.md)
 
----
+## Other Projects by [@timoncool](https://github.com/timoncool)
 
-## Русский
+| Project | Description |
+|---------|-------------|
+| [telegram-api-mcp](https://github.com/timoncool/telegram-api-mcp) | Full Telegram Bot API as MCP server |
+| [civitai-mcp-ultimate](https://github.com/timoncool/civitai-mcp-ultimate) | Civitai API as MCP server |
+| [trail-spec](https://github.com/timoncool/trail-spec) | TRAIL — cross-MCP content tracking protocol |
+| [GitLife](https://github.com/timoncool/gitlife) | Your life in weeks — interactive calendar |
+| [ACE-Step Studio](https://github.com/timoncool/ACE-Step-Studio) | AI music studio — songs, vocals, covers, videos |
+| [VideoSOS](https://github.com/timoncool/videosos) | AI video production in the browser |
 
-Скилл для Claude Code: геймифицированный аналитический портрет вашего стиля работы с ИИ.
-Локальный анализ логов → реальные цифры по **фиксированной шкале** (сравнимой между
-людьми), прикольный титул, уровень, ачивки с редкостью и рекомендации по
-промпт-инженерингу с опорой на исследования. Это не RPG-лист персонажа: аналитика —
-продукт, статусы — приправа.
+## Authors
 
-**Установка:** команда `git clone` выше (папка `~/.claude/skills/prompt-warrior`).
-Нужен только Python 3.8+, без зависимостей и ключей.
+- **Nerual Dreming** — [Telegram](https://t.me/nerual_dreming) | [neuro-cartel.com](https://neuro-cartel.com) | [ArtGeneration.me](https://artgeneration.me)
 
-**Запуск:** `/prompt-warrior` или просто «построй мой AI-профиль» в любой сессии.
+## Support the Author
 
-**Честная игра:** формулы шкалы заморожены ([SCALE v1](references/scale.md)) — все
-измеряются одинаково, поэтому профили можно сравнивать. Да, даже если градус ярости — 82.
+I build open-source software and do AI research. Most of what I create is free and available to everyone. Your donations help me keep creating without worrying about where the next meal comes from =)
 
-**Приватность:** всё локально; наружу не уходит ничего.
+**[All donation methods](https://github.com/timoncool/ACE-Step-Studio/blob/master/DONATE.md)** | **[dalink.to/nerual_dreming](https://dalink.to/nerual_dreming)** | **[boosty.to/neuro_art](https://boosty.to/neuro_art)**
 
-## Structure
+- **BTC:** `1E7dHL22RpyhJGVpcvKdbyZgksSYkYeEBC`
+- **ETH (ERC20):** `0xb5db65adf478983186d4897ba92fe2c25c594a0c`
+- **USDT (TRC20):** `TQST9Lp2TjK6FiVkn4fwfGUee7NmkxEE7C`
 
-```
-SKILL.md                       # skill entry: triggers + workflow
-scripts/analyze.py             # analyzer (stdlib-only, deterministic, read-only)
-references/scale.md            # SCALE v1 — frozen formulas
-references/rpg.md              # fun statuses: ranks, epithets, achievements
-references/recommendations.md  # metric-triggered advice with sources
-references/widget.md           # полный шаблон карточки для модели + правила дедупа
-references/sources.md          # verified evidence links (and refuted claims)
-```
+## Star History
+
+<a href="https://www.star-history.com/?repos=timoncool%2Fprompt-warrior&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=timoncool/prompt-warrior&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=timoncool/prompt-warrior&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=timoncool/prompt-warrior&type=date&legend=top-left" />
+ </picture>
+</a>
+
+## License
+
+[MIT](LICENSE)
