@@ -151,6 +151,26 @@ LEX = {
 }
 
 
+IMPERATIVE_STEMS = [
+    ("сделай", "make/do", re.compile(r"^(сдела|make$|do$)")),
+    ("проверь", "check", re.compile(r"^(провер|перепровер|чекн|check$|verify)")),
+    ("запусти", "run", re.compile(r"^(запус[тк]|перезапус|run$)")),
+    ("добавь", "add", re.compile(r"^(добав|add$)")),
+    ("давай", "let's go", re.compile(r"^давай$")),
+    ("убери / удали", "remove", re.compile(r"^(убер|удал|remove$|delete$)")),
+    ("исправь / почини", "fix", re.compile(r"^(исправ|поправ|почин|пофикс|fix$)")),
+    ("стоп / останови", "stop", re.compile(r"^(останов|стоп$|stop$)")),
+    ("покажи", "show", re.compile(r"^(покаж|show$)")),
+    ("напиши", "write", re.compile(r"^(напиш|write$)")),
+    ("обнови", "update", re.compile(r"^(обнов|update$)")),
+    ("создай", "create", re.compile(r"^(созда|create$)")),
+    ("найди", "find", re.compile(r"^(найди|поищ|find$|search$)")),
+    ("установи / поставь", "install", re.compile(r"^(установ|постав|install$)")),
+    ("верни / откати", "revert", re.compile(r"^(верни|откат|revert$)")),
+    ("объясни", "explain", re.compile(r"^(объясн|расскаж|explain$)")),
+]
+
+
 def rate(messages, key):
     """Percent of messages matching lexicon key."""
     if not messages:
@@ -176,10 +196,17 @@ def compute_metrics(messages):
 
     word_re = re.compile(r"[а-яёa-z]+")
     imperatives = 0
+    stem_counts = Counter()
     for m in voice:
         for tok in word_re.findall(m["text"].lower()):
             if LEX["imperative"].match(tok):
                 imperatives += 1
+            for label_ru, label_en, pat in IMPERATIVE_STEMS:
+                if pat.match(tok):
+                    stem_counts[(label_ru, label_en)] += 1
+                    break
+    top_imperatives = [{"ru": ru, "en": en, "count": c}
+                       for (ru, en), c in stem_counts.most_common(8)]
 
     profanity_hits = sum(len(LEX["profanity"].findall(m["text"])) for m in messages)
 
@@ -197,6 +224,9 @@ def compute_metrics(messages):
     except Exception:
         offset = 0
     night = sum(c for h, c in hours.items() if 0 <= (h + offset) % 24 <= 5)
+    hours_local = Counter()
+    for h, c in hours.items():
+        hours_local[(h + offset) % 24] += c
     span_days = 0
     if days:
         keys = sorted(days)
@@ -251,6 +281,8 @@ def compute_metrics(messages):
         "neg_to_praise_ratio": round(negatives / praise_n, 1) if praise_n else None,
         "language_mix": {"ru": round(100.0 * ru_chars / (ru_chars + lat_chars or 1)),
                          "en": round(100.0 * lat_chars / (ru_chars + lat_chars or 1))},
+        "top_imperatives": top_imperatives,
+        "hours_local": [hours_local.get(h, 0) for h in range(24)],
     }
 
 

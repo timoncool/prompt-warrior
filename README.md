@@ -85,5 +85,6 @@ scripts/analyze.py             # analyzer (stdlib-only, deterministic, read-only
 references/scale.md            # SCALE v1 — frozen formulas
 references/rpg.md              # fun statuses: ranks, epithets, achievements
 references/recommendations.md  # metric-triggered advice with sources
-references/widget.md           # card render spec
+references/widget.md           # полный шаблон карточки для модели + правила дедупа
+references/sources.md          # verified evidence links (and refuted claims)
 ```

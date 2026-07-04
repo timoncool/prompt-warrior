@@ -31,13 +31,12 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
      needed; stop.
    - `"low_confidence": true` (< 100 messages) → include a visible "small sample" caveat.
 
-3. **Render the analytical card** following `references/widget.md`. One card, one
-   product: the substance is the analytics (volume, imperatives, tone markers, activity
-   hours, strengths/weaknesses, recommendations); the gamified layer (title,
-   achievements, rage gauge) is flavor woven into it — never the other way around.
-   - If an inline widget tool is available in this environment, render it inline.
-   - Always also write a self-contained `ai-profile.html` to the working directory
-     and tell the user the path.
+3. **Build the card from the template** in `references/widget.md` — fill it with
+   profile.json data EXACTLY as the template prescribes: same CSS, same section order,
+   strengths and weakness→fix pairs picked by the template's rules, every number
+   printed exactly once. Write the result as `ai-profile.html` to the working
+   directory and tell the user the path. If an inline widget tool is available,
+   additionally render an inline widget mirroring the same sections and numbers.
 
 4. **Explain the profile** in the user's conversation language (the widget carries both
    RU and EN labels from profile.json). Lead with what the numbers say — notable
