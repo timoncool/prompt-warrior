@@ -64,6 +64,9 @@ unflattering, it stays. Report numbers only from `profile.json`, never invent or
       it prescribes (same CSS, same section order, rule-picked strengths and
       weakness→fix pairs, every number printed exactly once) and write
       `ai-profile.html` to the working directory. Tell the user the path.
+      NEVER Read .svg asset files into context — `scripts/icons.py` prints ready
+      inline SVG for every icon, the favicon and the seal (widget.md, rule 2д);
+      call it from your build script.
    b. OPEN it for the user: if a preview panel/tool is available, open it there;
       otherwise open in the default browser (`start` on Windows, `open` on macOS,
       `xdg-open` on Linux). Do not make the user open the file by hand.
