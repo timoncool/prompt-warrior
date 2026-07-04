@@ -26,7 +26,7 @@ bundled inside the `robohash` package (robohash.org is never contacted).
 
 - **Fixed scale (SCALE v1)** — frozen formulas and thresholds, everyone is measured identically, profiles are comparable
 - **Real analytics** — message volume, top imperatives, tone markers, activity by hour, strengths and weak spots derived strictly from your numbers
-- **Fun statuses** — a title built from your behavior (epithet + rank + level), 58 achievements from common to legendary, six gauges (Rage, Warmth, Rigor, Nocturnality, Impatience, Cache Thrift)
+- **Fun statuses** — a title built from your behavior (epithet + rank + level), 74 achievements from common to legendary, six gauges (Rage, Warmth, Rigor, Nocturnality, Impatience, Cache Thrift)
 - **Research-backed advice** — every recommendation cites a verified source; refuted claims are listed too ([sources.md](references/sources.md))
 - **Progress between visits** — the skill remembers your last run (locally): come back in a week and see new achievements, level-ups and metric shifts
 - **Duel a friend** — exchange `profile.json` files and run `scripts/compare.py` for a versus card; the fixed scale makes it fair
