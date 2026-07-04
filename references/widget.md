@@ -33,9 +33,11 @@
    <img src="avatar.png"> слева в шапке, 120-140px, скруглённый. Файла нет — шапка без
    картинки; заглушки, буквы и иконки вместо аватара ЗАПРЕЩЕНЫ.
 4в. Иконки ачивок: assets/achievement-icons/<id>.svg, при отсутствии — _<rarity>.svg
-   (game-icons.net CC-BY-3.0, атрибуция в ATTRIBUTION.md). В чип — инлайн 13-14px перед
-   названием: только <path> из файла с fill="currentColor", фоновые прямоугольники
-   выбрасывать — иконка красится цветом редкости.
+   (game-icons.net CC-BY-3.0, атрибуция в ATTRIBUTION.md). КРУПНО, как настоящая ачивка:
+   медальон .aico (54px, рамка цвета редкости, тёмный радиальный фон) слева, иконка 38px
+   внутри (только <path> с fill="currentColor", фоновые прямоугольники выбрасывать,
+   красится цветом редкости), текст справа (.atx). Карточки не растягивать по высоте
+   ряда (align-items:start) — без пустот.
 5. Числа — из profile.json как есть, без округлений и смягчений.
 
 ## Выбор пунктов «Сильное» (до 3, в этом порядке приоритета)
@@ -132,8 +134,10 @@ a{color:var(--brass);text-decoration:none;border-bottom:1px dotted var(--brass-d
 .gauge{height:12px;border-radius:6px;border:1px solid #322A23;background:linear-gradient(90deg,#6E7F46,#A08430 45%,#9C4A26 75%,#7E2B20);box-shadow:inset 0 2px 4px rgba(0,0,0,.45);position:relative}
 .needle{position:absolute;top:-4px;width:4px;height:20px;background:linear-gradient(180deg,#F0DCAC,#C9A962 60%,#8F7440);border-radius:2px;box-shadow:0 0 4px rgba(0,0,0,.6),0 0 8px rgba(201,169,98,.4)}
 .gnote{font-size:12px;margin:0 30px 9px 120px;color:#A8977F}
-.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.ac{background:linear-gradient(180deg,var(--oak2),#221B16);border:1px solid;border-radius:9px;padding:9px 12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 3px rgba(0,0,0,.4)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;align-items:start}
+.ac{display:flex;gap:11px;align-items:center;background:linear-gradient(180deg,var(--oak2),#221B16);border:1px solid;border-radius:9px;padding:8px 11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 3px rgba(0,0,0,.4)}
+.aico{flex:none;width:54px;height:54px;display:flex;align-items:center;justify-content:center;border:1px solid;border-radius:11px;background:radial-gradient(circle at 50% 35%,#2E2620,#191411 78%);box-shadow:inset 0 2px 5px rgba(0,0,0,.5),inset 0 -1px 0 rgba(255,255,255,.05)}
+.atx{min-width:0}
 .ac .nm{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;font-size:16px;line-height:1.25}
 .ac .rar{font-family:"Cinzel",Georgia,serif;text-transform:uppercase;letter-spacing:.1em;font-size:8.5px;margin-left:7px;opacity:.85}
 .ac .fl{font-size:12.5px;color:#C0AF9A;line-height:1.4;margin-top:3px}
@@ -236,7 +240,7 @@ ul.plus li::marker{color:#A9BC6E}
 <h2 style="color:#D8A091">Слабое и что делать</h2>
 <!-- до 4 .fix-плашек: слабость / → что делать / пруф-ссылка -->
 
-<div class="foot muted"><span style="font-family:'Cinzel',Georgia,serif;letter-spacing:.15em;font-size:11px">SCALE {{version}}</span><span class="seal">PW</span><span><a href="https://github.com/timoncool/prompt-warrior">github.com/timoncool/prompt-warrior</a></span></div>
+<div class="foot muted"><span style="font-family:'Cinzel',Georgia,serif;letter-spacing:.15em;font-size:11px">SCALE {{version}}</span><span class="seal">PW</span><span style="text-align:right">{{Понравилось? Поставьте звезду ★ / Enjoyed it? Star the repo ★}}<br><a href="https://github.com/timoncool/prompt-warrior">github.com/timoncool/prompt-warrior</a></span></div>
 </div></body></html>
 ```
 
