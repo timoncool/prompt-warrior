@@ -20,7 +20,7 @@ import re
 import sys
 from collections import Counter
 
-SCALE_VERSION = "v1.4"  # v1..v1.3 без изменений; v1.4: +экономика токенов, арсенал, проекты, скриншоты, PR, plan-mode (слои поверх)
+SCALE_VERSION = "v1.5"  # v1..v1.3 без изменений; v1.4: +экономика токенов, арсенал, проекты, скриншоты, PR, plan-mode (слои поверх)
 
 # ---------------------------------------------------------------- extraction
 
@@ -64,26 +64,51 @@ def new_aux():
     return {"interruptions": 0, "assistant_msgs": 0, "thinking": 0, "images": 0,
             "tool_errors": 0, "prs": 0, "plan_modes": 0, "queued": 0,
             "tok_in": 0, "tok_out": 0, "tok_cache_read": 0, "tok_cache_new": 0,
-            "pr_urls": set(),
-            "tools": Counter(), "models": Counter(), "projects": Counter()}
+            "pr_urls": set(), "double_texts": 0, "usage_seen": set(),
+            "versions": set(), "branches": set(),
+            "session_tokens": Counter(), "session_names": {},
+            "tools": Counter(), "models": Counter(), "projects": Counter(),
+            "entrypoints": Counter(), "extensions": Counter()}
 
 
 def harvest(entry, aux):
     """Дешёвые слои v1.4: токены, инструменты, модели, проекты, PR — из уже распарсенной строки."""
     t = entry.get("type")
+    ver = entry.get("version")
+    if ver:
+        aux["versions"].add(ver)
+    br = entry.get("gitBranch")
+    if br:
+        aux["branches"].add(br)
+    ep = entry.get("entrypoint")
+    if ep:
+        aux["entrypoints"][ep] += 1
     if t == "assistant":
-        aux["assistant_msgs"] += 1
         msg = entry.get("message") or {}
-        u = msg.get("usage") or {}
-        for src, dst in (("input_tokens", "tok_in"), ("output_tokens", "tok_out"),
-                         ("cache_read_input_tokens", "tok_cache_read"),
-                         ("cache_creation_input_tokens", "tok_cache_new")):
-            v = u.get(src)
-            if isinstance(v, int):
-                aux[dst] += v
-        model = msg.get("model")
-        if model and not str(model).startswith("<"):
-            aux["models"][model] += 1
+        # один API-ответ пишется несколькими строками с одним message.id —
+        # usage/модель/счётчик ответов считаем один раз (как ccusage)
+        ukey = (msg.get("id"), entry.get("requestId"))
+        fresh = msg.get("id") is None or ukey not in aux["usage_seen"]
+        if fresh:
+            aux["usage_seen"].add(ukey)
+            aux["assistant_msgs"] += 1
+            u = msg.get("usage") or {}
+            for src, dst in (("input_tokens", "tok_in"), ("output_tokens", "tok_out"),
+                             ("cache_read_input_tokens", "tok_cache_read"),
+                             ("cache_creation_input_tokens", "tok_cache_new")):
+                v = u.get(src)
+                if isinstance(v, int):
+                    aux[dst] += v
+            sid = entry.get("sessionId")
+            if sid and isinstance(u.get("output_tokens"), int):
+                aux["session_tokens"][sid] += u["output_tokens"]
+            model = msg.get("model")
+            if model and not str(model).startswith("<"):
+                aux["models"][model] += 1
+        sid = entry.get("sessionId")
+        slug = entry.get("slug")
+        if sid and slug:
+            aux["session_names"].setdefault(sid, slug)
         c = msg.get("content")
         if isinstance(c, list):
             for b in c:
@@ -91,6 +116,9 @@ def harvest(entry, aux):
                     continue
                 if b.get("type") == "tool_use":
                     aux["tools"][b.get("name", "?")] += 1
+                    fp = (b.get("input") or {}).get("file_path") or ""
+                    if isinstance(fp, str) and "." in os.path.basename(fp):
+                        aux["extensions"][os.path.basename(fp).rsplit(".", 1)[-1].lower()] += 1
                 elif b.get("type") == "thinking":
                     aux["thinking"] += 1
     elif t == "user":
@@ -105,6 +133,11 @@ def harvest(entry, aux):
                         aux["images"] += 1
                     elif b.get("type") == "tool_result" and b.get("is_error"):
                         aux["tool_errors"] += 1
+    elif t == "custom-title":
+        sid = entry.get("sessionId")
+        title = entry.get("customTitle") or entry.get("title")
+        if sid and title:
+            aux["session_names"][sid] = title
     elif t == "pr-link":
         aux.setdefault("pr_urls", set()).add(entry.get("prUrl") or entry.get("prNumber") or "?")
     elif t == "mode":
@@ -131,6 +164,7 @@ def collect(projects_dir, project=None, aux=None):
         except OSError:
             continue
         with fh:
+            prev_user_text = False
             for line in fh:
                 line = line.strip()
                 if not line:
@@ -141,6 +175,8 @@ def collect(projects_dir, project=None, aux=None):
                     continue
                 if aux is not None:
                     harvest(entry, aux)
+                    if entry.get("type") == "assistant":
+                        prev_user_text = False
                 text = extract_text(entry)
                 if text is None:
                     if aux is not None and entry.get("type") == "user":
@@ -152,6 +188,10 @@ def collect(projects_dir, project=None, aux=None):
                         if t_.startswith("[Request interrupted"):
                             aux["interruptions"] += 1
                     continue
+                if aux is not None:
+                    if prev_user_text:
+                        aux["double_texts"] += 1
+                    prev_user_text = True
                 uid = entry.get("uuid")
                 if uid and uid in seen_uuid:
                     continue
@@ -385,6 +425,17 @@ def compute_metrics(messages):
     if n_tot >= 50 and d_tot >= 50 and d_prof:
         werewolf = round((n_prof / n_tot) / (d_prof / d_tot), 2)
 
+    reject_re = re.compile(r"^\s*(нет\b|не так\b|не то\b|опять\b|снова\b|no\b|wrong\b|again\b)", re.I)
+    rejects = sum(1 for m in messages if reject_re.match(m["text"]))
+    qre = {"why": re.compile(r"\b(почему|зачем|why)\b", re.I),
+           "how": re.compile(r"\b(как|how)\b", re.I),
+           "what": re.compile(r"\b(что|какой|какая|какие|what|which)\b", re.I)}
+    qmsgs = [m for m in messages if "?" in m["text"]]
+    qt = {k: sum(1 for m in qmsgs if rx.search(m["text"])) for k, rx in qre.items()}
+    cyr_re, lat_re = re.compile(r"[а-яё]{2,}", re.I), re.compile(r"[a-z]{2,}", re.I)
+    switching = sum(1 for m in voice
+                    if len(cyr_re.findall(m["text"])) >= 2 and len(lat_re.findall(m["text"])) >= 2)
+
     lang_base = voice or messages
     ru_chars = sum(len(re.findall(r"[а-яё]", m["text"].lower())) for m in lang_base)
     lat_chars = sum(len(re.findall(r"[a-z]", m["text"].lower())) for m in lang_base)
@@ -433,6 +484,9 @@ def compute_metrics(messages):
         "boiled_sessions_pct": round(100.0 * boiled / rated_sessions, 1) if rated_sessions else 0,
         "werewolf_ratio": werewolf,
         "signature_words": signature_words(voice),
+        "reject_openers_pct": round(100.0 * rejects / n, 1) if n else 0,
+        "question_types_pct": {k: round(100.0 * v / len(qmsgs), 1) if qmsgs else 0 for k, v in qt.items()},
+        "code_switching_pct": round(100.0 * switching / nv, 1) if nv else 0,
     }
 
 
@@ -463,7 +517,7 @@ def compute_indexes(m):
     return indexes, rage
 
 
-def compute_gauges(m, rage):
+def compute_gauges(m, rage, cache_eff=None):
     """Fun 0-100 gauges. Derived from v1 metrics only; formulas frozen per version."""
     warmth = clamp(m["politeness_pct"] * 12 + m["praise_pct"] * 8)
     rigor = clamp(m["verify_pct"] * 6 + m["self_correction_pct"] * 10 + m["categorical_pct"] * 2)
@@ -509,7 +563,28 @@ def compute_gauges(m, rage):
             "night is your shift: a third of your model time happens before dawn",
             "half an owl: night raids do happen",
             "daytime creature: nights are for sleep — rare in these logs")},
-    ]
+        {"id": "impatience", "ru": "Нетерпеливость", "en": "Impatience",
+         "value": round(clamp(m.get("interruptions_per_100", 0) * 1.5)),
+         "caption_ru": bucket(clamp(m.get("interruptions_per_100", 0) * 1.5),
+            "модель редко успевает договорить — руление на живой нитке",
+            "прерываете по делу, когда видите занос",
+            "дослушиваете до конца — редкое спокойствие"),
+         "caption_en": bucket(clamp(m.get("interruptions_per_100", 0) * 1.5),
+            "the model rarely gets to finish a sentence — you steer live",
+            "you interrupt when it matters",
+            "you let it finish — rare patience")},
+    ] + ([] if cache_eff is None else [
+        {"id": "cache_thrift", "ru": "Кэш-скряга", "en": "Cache Thrift",
+         "value": round(clamp(cache_eff)),
+         "caption_ru": bucket(clamp(cache_eff),
+            "контекст переиспользуется, а не оплачивается заново",
+            "кэш вполсилы — длиннее сессии, больше экономия",
+            "почти без кэша: короткие разрозненные заходы", 85, 50),
+         "caption_en": bucket(clamp(cache_eff),
+            "context is reused, not repurchased",
+            "cache at half power — longer sessions mean bigger savings",
+            "barely cached: short scattered runs", 85, 50)},
+    ])
 
 
 RANKS = {
@@ -665,11 +740,31 @@ ACHIEVEMENTS = [
      lambda m, r: m.get("distinct_tools", 0) >= 15),
     ("tool_breaker", "Ломатель", "Toolbreaker", "rare", "Испытатель Пределов", "Tester of Limits",
      lambda m, r: m.get("tool_error_pct", 0) >= 5),
+    ("long_patience", "Долгое терпение", "Long Patience", "rare", "Хранящий Спокойствие", "Keeper of Calm",
+     lambda m, r: m.get("boiled_sessions_pct", 100) < 10 and m["sessions"] >= 20),
+    ("strict_acceptor", "Строгий приёмщик", "Strict Acceptor", "rare", "Бракующий с Порога", "Rejecter at the Gate",
+     lambda m, r: m.get("reject_openers_pct", 0) >= 10),
+    ("thought_burst", "Очередь мыслей", "Thought Burst", "common", "Думающий Очередями", "Thinker in Salvos",
+     lambda m, r: m.get("double_texts_per_100", 0) >= 10),
+    ("warlord", "Полководец", "Warlord", "epic", "Ведущий Легионы", "Leader of Legions",
+     lambda m, r: m.get("subagent_spawn_calls", 0) >= 50),
+    ("legion_lord", "Владыка легионов", "Lord of Legions", "legendary", "Тысяча Клинков", "A Thousand Blades",
+     lambda m, r: m.get("subagent_spawn_calls", 0) >= 200),
 ]
 
 
 ACHIEVEMENT_DESCS = {
     # id -> (флейвор RU, условие RU, flavor EN, condition EN)
+    "long_patience": ("Сессии не вскипают — спокойствие как стиль", "вскипает < 10% сессий при 20+ сессиях",
+                      "Sessions never boil — calm as a style", "fewer than 10% of sessions flare up across 20+"),
+    "strict_acceptor": ("«Нет» — первый ответ на каждый десятый результат", "реплики с «нет / не так / опять» ≥ 10%",
+                        "“No” opens every tenth reply", "reject-openers in ≥ 10% of messages"),
+    "thought_burst": ("Реплики летят очередями, не дожидаясь ответа", "дабл-тексты ≥ 10 на 100 реплик",
+                      "Messages come in salvos, not waiting for replies", "double-texts ≥ 10 per 100 messages"),
+    "warlord": ("Субагенты строятся по вашему слову", "≥ 50 вызовов порождения агентов",
+                "Subagents assemble at your word", "≥ 50 agent-spawn calls"),
+    "legion_lord": ("Армии агентов — ваш стиль работы", "≥ 200 вызовов порождения агентов",
+                    "Armies of agents are how you work", "≥ 200 agent-spawn calls"),
     "sprinter": ("Слова — серебро: ваши команды укладываются в полдесятка слов",
                  "медиана набранной реплики ≤ 8 слов",
                  "Words are silver: your commands fit in half a dozen words",
@@ -921,6 +1016,13 @@ def build_layers(aux, n_messages):
     proj_total = sum(aux["projects"].values())
     top_projects = [{"name": os.path.basename(n.rstrip("\\/")) or n, "share_pct": round(100.0 * c / proj_total, 1)}
                     for n, c in aux["projects"].most_common(5)] if proj_total else []
+    mcp_top = Counter()
+    for name, cnt in aux["tools"].items():
+        if name.startswith("mcp__"):
+            mcp_top[name.split("__")[1]] += cnt
+    spawns = sum(aux["tools"].get(x, 0) for x in ("Agent", "Task", "Workflow"))
+    top_sessions = [{"name": aux["session_names"].get(sid, sid[:8]), "tokens_out": tok}
+                    for sid, tok in aux["session_tokens"].most_common(3)]
     arsenal = {
         "tool_calls": total_tools,
         "distinct_tools": len(aux["tools"]),
@@ -931,6 +1033,13 @@ def build_layers(aux, n_messages):
         "projects_count": len(aux["projects"]),
         "top_projects": top_projects,
         "tool_error_pct": round(100.0 * aux["tool_errors"] / total_tools, 1) if total_tools else 0,
+        "top_mcp_servers": [{"name": n, "count": c} for n, c in mcp_top.most_common(3)],
+        "top_extensions": [{"ext": n, "count": c} for n, c in aux["extensions"].most_common(5)],
+        "subagent_spawn_calls": spawns,
+        "entrypoints": [{"name": n, "count": c} for n, c in aux["entrypoints"].most_common(3)],
+        "versions_seen": len(aux["versions"]),
+        "branches_seen": len(aux["branches"]),
+        "top_sessions": top_sessions,
     }
     return economy, arsenal
 
@@ -948,6 +1057,8 @@ def build_profile(messages, aux=None, source="claude-code"):
     m["distinct_tools"] = arsenal["distinct_tools"] if arsenal else 0
     m["cache_efficiency_pct"] = economy["cache_efficiency_pct"] if economy else None
     m["tokens_output_m"] = round(economy["tokens_output"] / 1e6, 1) if economy else 0
+    m["double_texts_per_100"] = round(100.0 * (aux or {}).get("double_texts", 0) / m["messages"], 1) if m["messages"] else 0
+    m["subagent_spawn_calls"] = arsenal["subagent_spawn_calls"] if arsenal else 0
     if m["messages"] < 30:
         return {"error": "not_enough_data", "messages": m["messages"],
                 "note": "Need at least 30 user messages for a profile."}
@@ -973,7 +1084,7 @@ def build_profile(messages, aux=None, source="claude-code"):
         "level": level,
         "title": {"ru": title_ru, "en": title_en},
         "achievements": achievements,
-        "gauges": compute_gauges(m, rage),
+        "gauges": compute_gauges(m, rage, economy["cache_efficiency_pct"] if economy else None),
         "economy": economy,
         "arsenal": arsenal,
         "identity": build_identity(source, aux),

@@ -26,12 +26,12 @@ bundled inside the `robohash` package (robohash.org is never contacted).
 
 - **Fixed scale (SCALE v1)** — frozen formulas and thresholds, everyone is measured identically, profiles are comparable
 - **Real analytics** — message volume, top imperatives, tone markers, activity by hour, strengths and weak spots derived strictly from your numbers
-- **Fun statuses** — a title built from your behavior (epithet + rank + level), 24 achievements from common to legendary, the rage gauge
+- **Fun statuses** — a title built from your behavior (epithet + rank + level), 58 achievements from common to legendary, six gauges (Rage, Warmth, Rigor, Nocturnality, Impatience, Cache Thrift)
 - **Research-backed advice** — every recommendation cites a verified source; refuted claims are listed too ([sources.md](references/sources.md))
 - **Progress between visits** — the skill remembers your last run (locally): come back in a week and see new achievements, level-ups and metric shifts
 - **Duel a friend** — exchange `profile.json` files and run `scripts/compare.py` for a versus card; the fixed scale makes it fair
-- **Deep-cut signals** — interruption rate, session boiling point, the werewolf index (night vs day profanity), your signature vocabulary
-- **Economy & arsenal** — tokens burned and cache efficiency, your tool profile (operator / surgeon / archaeologist), models, projects, PRs shipped
+- **Deep-cut signals** — interruption rate, session boiling point, the werewolf index (night vs day profanity), your signature vocabulary, double-texting, reject-openers, RU/EN code-switching, question-type mix
+- **Economy & arsenal** — tokens burned (deduplicated like ccusage) and cache efficiency, your tool profile (operator / surgeon / archaeologist), models, projects, PRs shipped, top MCP servers, file extensions you actually touch, subagent armies, most expensive sessions
 - **Monster avatars, fully local** — a deterministic creature from your title (evolves with your title), assembled offline by the optional `robohash` package; no network, no API
 - **Achievement icons** — vendored SVGs from [game-icons.net](https://game-icons.net) (CC-BY-3.0, see assets/achievement-icons/ATTRIBUTION.md)
 - **Cross-harness aware** — known session-log formats for Codex CLI, OpenCode, Gemini CLI and Copilot documented in [references/harnesses.md](references/harnesses.md)

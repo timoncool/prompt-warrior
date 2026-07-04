@@ -51,7 +51,7 @@ tie-break по порядку строк:
 | praise ≥ 8% | Щедрый | Openhanded |
 | default | Странствующий | Wandering |
 
-## Achievements (54, редкость по паттерну bronze/silver/gold + legendary)
+## Achievements (58, редкость по паттерну bronze/silver/gold + legendary)
 
 | ID | RU | EN | Rarity | Condition |
 |----|----|----|--------|-----------|
@@ -108,6 +108,11 @@ tie-break по порядку строк:
 | cowboy | Ковбой | Cowboy | common | 0 план-режимов при 50+ сессиях |
 | multitool | Мультитул | Multitool | rare | ≥ 15 разных инструментов |
 | tool_breaker | Ломатель | Toolbreaker | rare | ≥ 5% вызовов инструментов с ошибкой |
+| long_patience | Долгое терпение | Long Patience | rare | вскипает < 10% сессий при 20+ сессиях (анти-пара «Короткому фитилю») |
+| strict_acceptor | Строгий приёмщик | Strict Acceptor | rare | реплики с «нет / не так / опять» ≥ 10% |
+| thought_burst | Очередь мыслей | Thought Burst | common | дабл-тексты ≥ 10 на 100 реплик |
+| warlord | Полководец | Warlord | epic | ≥ 50 вызовов порождения субагентов |
+| legion_lord | Владыка легионов | Lord of Legions | legendary | ≥ 200 вызовов порождения субагентов |
 
 Принцип прогрессии (по модели GitHub Achievements с тирами Bronze/Silver/Gold): часть ачивок
 образует лестницы — «Клуб ста» → «Тысяча голосов» (объём), «Спринтер» → «Романист» (стиль).
