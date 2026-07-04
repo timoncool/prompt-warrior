@@ -36,9 +36,13 @@ tie-break по порядку строк:
 | politeness ≥ 3% | Учтивый | Courteous |
 | median words ≥ 25 | Обстоятельный | Thorough |
 | profanity ≥ 30/1000 | Сквернословящий | Foul-mouthed |
+| morning ≥ 25% | Рассветный | Dawnbound |
+| verify ≥ 6% и самокоррекция ≥ 3% | Методичный | Methodical |
+| median ≤ 6 слов | Лаконичный | Laconic |
+| praise ≥ 8% | Щедрый | Openhanded |
 | default | Странствующий | Wandering |
 
-## Achievements (24, редкость по паттерну bronze/silver/gold + legendary)
+## Achievements (41, редкость по паттерну bronze/silver/gold + legendary)
 
 | ID | RU | EN | Rarity | Condition |
 |----|----|----|--------|-----------|
@@ -66,6 +70,22 @@ tie-break по порядку строк:
 | tyrant | Тиран | Tyrant | legendary | negativity : praise ≥ 10:1 |
 | saint | Святой | Saint | legendary | politeness ≥ 5% and profanity < 1/1000 |
 | volcano_heart | Сердце вулкана | Volcano Heart | legendary | RAGE ≥ 85 |
+| early_bird | Ранняя пташка | Early Bird | rare | ≥ 30% активности 05:00–10:00 |
+| day_shift | Дневная смена | Day Shift | common | ≥ 55% активности 09:00–18:00 |
+| weekender | Воин выходных | Weekend Warrior | rare | ≥ 35% реплик в выходные |
+| verify_novice | Ревизор-подмастерье | Apprentice Auditor | common | verify 5–10% (ступень к Trust but Verify) |
+| spec_architect | Зодчий спецификаций | Spec Architect | epic | ≥ 8% реплик 200+ слов (ступень от Романиста) |
+| calm_commander | Спокойная сила | Calm Command | rare | императивы ≥ 30/100 при ярости < 20 |
+| diplomat | Дипломат | Diplomat | rare | вежливость ≥ 2% при оскорблениях < 1% |
+| mentor | Наставник | Mentor | epic | похвала ≥ 10% (ступень от Доброй души) |
+| decisive | Без лишних вопросов | No Questions Asked | common | вопросы < 15% при 200+ репликах |
+| deep_diver | Глубокое погружение | Deep Diver | rare | ≥ 60 слов на реплику в среднем |
+| structured_mind | Структурный ум | Structured Mind | rare | код/ссылки в ≥ 25% реплик |
+| sprint_sessions | Спринт-сессии | Sprint Sessions | common | 30+ сессий по ≤ 20 реплик |
+| veteran | Ветеран | Veteran | epic | период ≥ 90 дней |
+| recruit | Новобранец | Recruit | common | первая неделя в логах |
+| night_lord | Владыка ночи | Lord of the Night | epic | ночь ≥ 50% (ступень от Ночного дозора) |
+| balanced | Уравновешенный | Even Keel | rare | ярость 5–40, негатив:похвала ≤ 3 |
 
 Принцип прогрессии (по модели GitHub Achievements с тирами Bronze/Silver/Gold): часть ачивок
 образует лестницы — «Клуб ста» → «Тысяча голосов» (объём), «Спринтер» → «Романист» (стиль).

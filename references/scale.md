@@ -1,4 +1,8 @@
-# SCALE v1 — fixed scoring contract
+# SCALE v1.1 — fixed scoring contract
+
+v1.1: формулы всех метрик и индексов НЕ менялись относительно v1 (профили сравнимы);
+расширен набор ачивок (24 → 41) и эпитетов (7 → 11), добавлены метрики
+morning/day/weekend_share. Сравнение ачивок между v1 и v1.1 — только по общим 24.
 
 Все формулы реализованы в `scripts/analyze.py` и зафиксированы. Изменение любой константы =
 новая версия шкалы (v2, v3...) и несравнимость со старыми результатами. / All formulas are
@@ -27,6 +31,10 @@ never an RPG stat sheet:
 | context | Context richness | 0.4 × min(100, median words per message × 2.5) + 0.4 × min(100, % messages ≥ 100 words × 20) + 0.2 × min(100, % messages with code/URL × 5) |
 | verification | Verification & reflection | 0.5 × min(100, verify % × 6) + 0.25 × min(100, self-correction % × 25) + 0.25 × min(100, why-questions % × 8) |
 | diplomacy | Diplomacy | clamp(50 + politeness % × 10 + praise % × 5 − insults % × 2 − profanity per 1000 words × 0.5) |
+
+Дополнительные доли времени: morning_share_pct (05:00–09:59), day_share_pct (09:00–18:59),
+weekend_share_pct (суббота-воскресенье по дате реплики) — используются ачивками и эпитетами,
+в индексы НЕ входят.
 
 **Ярость / RAGE meter** (shown on the card as a fun gauge): min(100, profanity per 1000
 words × 1.5 + CAPS-messages % + multi-punctuation %). Night share uses local-time hours

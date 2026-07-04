@@ -20,7 +20,7 @@ import re
 import sys
 from collections import Counter
 
-SCALE_VERSION = "v1"
+SCALE_VERSION = "v1.1"  # формулы метрик v1 не менялись; расширен набор ачивок и эпитетов
 
 # ---------------------------------------------------------------- extraction
 
@@ -227,6 +227,17 @@ def compute_metrics(messages):
     hours_local = Counter()
     for h, c in hours.items():
         hours_local[(h + offset) % 24] += c
+    morning = sum(c for h, c in hours_local.items() if 5 <= h <= 9)
+    day = sum(c for h, c in hours_local.items() if 9 <= h <= 18)
+    weekend = 0
+    try:
+        import datetime
+        for msg in messages:
+            if msg["ts"]:
+                if datetime.date.fromisoformat(msg["ts"][:10]).weekday() >= 5:
+                    weekend += 1
+    except ValueError:
+        pass
     span_days = 0
     if days:
         keys = sorted(days)
@@ -278,6 +289,9 @@ def compute_metrics(messages):
         "categorical_pct": round(rate(messages, "categorical"), 1),
         "memory_rules_pct": round(rate(messages, "memory_rules"), 1),
         "night_share_pct": round(100.0 * night / total_ts, 1),
+        "morning_share_pct": round(100.0 * morning / total_ts, 1),
+        "day_share_pct": round(100.0 * day / total_ts, 1),
+        "weekend_share_pct": round(100.0 * weekend / n, 1) if n else 0,
         "neg_to_praise_ratio": round(negatives / praise_n, 1) if praise_n else None,
         "language_mix": {"ru": round(100.0 * ru_chars / (ru_chars + lat_chars or 1)),
                          "en": round(100.0 * lat_chars / (ru_chars + lat_chars or 1))},
@@ -344,6 +358,14 @@ def pick_epithet(m, rage):
         return ("Обстоятельный", "Thorough")
     if m["profanity_per_1000_words"] >= 30:
         return ("Сквернословящий", "Foul-mouthed")
+    if m["morning_share_pct"] >= 25:
+        return ("Рассветный", "Dawnbound")
+    if m["verify_pct"] >= 6 and m["self_correction_pct"] >= 3:
+        return ("Методичный", "Methodical")
+    if m["median_words_voice"] <= 6:
+        return ("Лаконичный", "Laconic")
+    if m["praise_pct"] >= 8:
+        return ("Щедрый", "Openhanded")
     return ("Странствующий", "Wandering")
 
 
@@ -400,6 +422,38 @@ ACHIEVEMENTS = [
      lambda m, r: m["categorical_pct"] >= 8),
     ("gentle_soul", "Добрая душа", "Gentle Soul", "rare", "Друг Машин", "Friend of Machines",
      lambda m, r: m["praise_pct"] >= 5),
+    ("early_bird", "Ранняя пташка", "Early Bird", "rare", "Встречающий Рассвет", "Greeter of Dawns",
+     lambda m, r: m["morning_share_pct"] >= 30),
+    ("day_shift", "Дневная смена", "Day Shift", "common", "Хранитель Распорядка", "Keeper of the Schedule",
+     lambda m, r: m["day_share_pct"] >= 55),
+    ("weekender", "Воин выходных", "Weekend Warrior", "rare", "Не Знающий Суббот", "Knower of No Saturdays",
+     lambda m, r: m["weekend_share_pct"] >= 35),
+    ("verify_novice", "Ревизор-подмастерье", "Apprentice Auditor", "common", "Проверяющий", "The Checking One",
+     lambda m, r: 5 <= m["verify_pct"] < 10),
+    ("spec_architect", "Зодчий спецификаций", "Spec Architect", "epic", "Мастер Чертежей", "Master of Blueprints",
+     lambda m, r: m["long_share_pct"] >= 8),
+    ("calm_commander", "Спокойная сила", "Calm Command", "rare", "Невозмутимый Командир", "The Unruffled Commander",
+     lambda m, r: m["imperatives_per_100_voice"] >= 30 and r < 20),
+    ("diplomat", "Дипломат", "Diplomat", "rare", "Голос Согласия", "Voice of Accord",
+     lambda m, r: m["politeness_pct"] >= 2 and m["insult_pct"] < 1),
+    ("mentor", "Наставник", "Mentor", "epic", "Вдохновляющий", "The Inspiring",
+     lambda m, r: m["praise_pct"] >= 10),
+    ("decisive", "Без лишних вопросов", "No Questions Asked", "common", "Решительный", "The Decisive",
+     lambda m, r: m["question_pct"] < 15 and m["messages"] >= 200),
+    ("deep_diver", "Глубокое погружение", "Deep Diver", "rare", "Ныряющий в Детали", "Diver into Detail",
+     lambda m, r: m["words_per_message"] >= 60),
+    ("structured_mind", "Структурный ум", "Structured Mind", "rare", "Носитель Ссылок", "Bearer of References",
+     lambda m, r: m["structured_share_pct"] >= 25),
+    ("sprint_sessions", "Спринт-сессии", "Sprint Sessions", "common", "Мастер Коротких Заходов", "Master of Short Runs",
+     lambda m, r: m["sessions"] >= 30 and m["messages"] / m["sessions"] <= 20),
+    ("veteran", "Ветеран", "Veteran", "epic", "Старожил", "The Old Guard",
+     lambda m, r: m["span_days"] >= 90),
+    ("recruit", "Новобранец", "Recruit", "common", "Начинающий Путь", "Setting Out",
+     lambda m, r: m["span_days"] <= 7),
+    ("night_lord", "Владыка ночи", "Lord of the Night", "epic", "Повелитель Полуночи", "Sovereign of Midnight",
+     lambda m, r: m["night_share_pct"] >= 50),
+    ("balanced", "Уравновешенный", "Even Keel", "rare", "Держащий Баланс", "Holder of Balance",
+     lambda m, r: 5 <= r <= 40 and (m["neg_to_praise_ratio"] or 0) <= 3 and m["messages"] >= 200),
 ]
 
 
@@ -501,6 +555,38 @@ ACHIEVEMENT_DESCS = {
                     "похвала в ≥ 5% реплик",
                     "Generous with praise — a rare gift in these lands",
                     "praise in ≥ 5% of messages"),
+    "early_bird": ("Лучшие коммиты — до завтрака", "≥ 30% активности между 05:00 и 10:00",
+                   "The best commits happen before breakfast", "≥ 30% of activity between 5 and 10 a.m."),
+    "day_shift": ("Здоровый график — тоже суперспособность", "≥ 55% активности между 09:00 и 18:00",
+                  "A sane schedule is a superpower too", "≥ 55% of activity between 9 a.m. and 6 p.m."),
+    "weekender": ("Суббота — это просто пятница номер два", "≥ 35% реплик в выходные",
+                  "Saturday is just a second Friday", "≥ 35% of messages on weekends"),
+    "verify_novice": ("Проверка входит в привычку — уже не на слово", "запросы проверки в 5–10% реплик",
+                      "Verification is becoming a habit", "verify-requests in 5-10% of messages"),
+    "spec_architect": ("Постановки-чертежи: модель строит с первого раза", "≥ 8% реплик длиннее 200 слов",
+                       "Blueprint briefs: the model builds it right the first time", "≥ 8% of messages over 200 words"),
+    "calm_commander": ("Командуете много — не повышая голоса", "императивы ≥ 30 на 100 реплик при ярости < 20",
+                       "Heavy command load without raising your voice", "imperatives ≥ 30/100 with rage < 20"),
+    "diplomat": ("Вежливость без единого оскорбления — переговорщик от бога", "вежливость ≥ 2% при оскорблениях < 1%",
+                 "Politeness with zero insults", "politeness ≥ 2% with insults < 1%"),
+    "mentor": ("Каждая десятая реплика — поддержка: модель у вас работает лучше всех", "похвала в ≥ 10% реплик",
+               "Every tenth message is encouragement", "praise in ≥ 10% of messages"),
+    "decisive": ("Знаете, чего хотите — вопросы почти не нужны", "вопросы < 15% при 200+ репликах",
+                 "You know what you want", "questions < 15% across 200+ messages"),
+    "deep_diver": ("Реплики-эссе: каждая несёт полный контекст", "в среднем ≥ 60 слов на реплику",
+                   "Essay-length messages carrying full context", "≥ 60 words per message on average"),
+    "structured_mind": ("Код, ссылки, структура — модель получает материал, а не пересказ", "код или ссылки в ≥ 25% реплик",
+                        "Code, links, structure in your messages", "code/links in ≥ 25% of messages"),
+    "sprint_sessions": ("Забежал, сделал, вышел — десятки коротких точных сессий", "30+ сессий при ≤ 20 репликах на сессию",
+                        "In, done, out: dozens of short precise sessions", "30+ sessions at ≤ 20 messages each"),
+    "veteran": ("Три месяца в строю — это уже стиль жизни", "период активности ≥ 90 дней",
+                "Three months in service", "activity span ≥ 90 days"),
+    "recruit": ("Добро пожаловать на арену", "первая неделя в логах",
+                "Welcome to the arena", "first week in the logs"),
+    "night_lord": ("Не просто ночной дозор — ночь и есть ваша смена", "≥ 50% активности между 00:00 и 06:00",
+                   "Night is not a watch, it is your shift", "≥ 50% of activity between midnight and 6 a.m."),
+    "balanced": ("Ровный тон, ровный темп — редчайший профиль", "ярость 5–40, негатив к похвале ≤ 3, от 200 реплик",
+                 "Even tone, even tempo", "rage 5-40, negativity:praise <= 3 across 200+ messages"),
 }
 
 
