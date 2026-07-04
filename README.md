@@ -77,6 +77,8 @@ are frozen, nobody gets one for free.
 - **Strong & weak** — with a fix and a source for every weakness
 - **Progress between visits** — come back in a week: new achievements, level-ups,
   metric shifts. That's the share-worthy moment.
+- **Duel a friend** — exchange `profile.json` files and run `scripts/compare.py` for a
+  versus card; the frozen scale makes it a fair fight.
 
 Everything ships in both **RU and EN**, symmetrically — the card speaks your language.
 Cross-harness aware: session-log formats for Codex CLI, OpenCode, Gemini CLI and Copilot
@@ -112,7 +114,9 @@ are documented in [references/harnesses.md](references/harnesses.md).
 - *"build my prompt warrior profile"* — all-time profile
 - *"my prompt profile for the last week"* — last 7 days
 - *"профиль за июнь"* — exact date range
+- *"profile for project X"* — a single project (`--project`)
 - The period is always your choice; the skill never picks one silently.
+- No browser, no widget? The card falls back to plain text right in the console.
 
 Under the hood: `scripts/analyze.py` reads `~/.claude/projects` JSONL logs (read-only),
 deduplicates your messages, computes metrics and writes `profile.json`; Claude then
