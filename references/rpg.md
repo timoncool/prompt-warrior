@@ -51,7 +51,7 @@ tie-break по порядку строк:
 | praise ≥ 8% | Щедрый | Openhanded |
 | default | Странствующий | Wandering |
 
-## Achievements (58, редкость по паттерну bronze/silver/gold + legendary)
+## Achievements (74, редкость по паттерну bronze/silver/gold + legendary)
 
 | ID | RU | EN | Rarity | Condition |
 |----|----|----|--------|-----------|
@@ -113,6 +113,22 @@ tie-break по порядку строк:
 | thought_burst | Очередь мыслей | Thought Burst | common | дабл-тексты ≥ 10 на 100 реплик |
 | warlord | Полководец | Warlord | epic | ≥ 50 вызовов порождения субагентов |
 | legion_lord | Владыка легионов | Lord of Legions | legendary | ≥ 200 вызовов порождения субагентов |
+| bilingual_blade | Двуязычный клинок | Bilingual Blade | rare | код-свитчинг RU↔EN в ≥ 10% реплик |
+| why_seeker | Философ | The Philosopher | rare | ≥ 20% вопросов — «почему/зачем» |
+| babel_scribe | Вавилонский писарь | Babel Scribe | rare | ≥ 8 разных расширений файлов |
+| puppeteer | Кукловод серверов | Server Puppeteer | rare | ≥ 25% вызовов — MCP |
+| update_veteran | Ветеран обновлений | Update Veteran | common | ≥ 5 версий Claude Code за период |
+| branch_weaver | Ткач ветвей | Branch Weaver | rare | ≥ 10 git-веток за период |
+| leviathan | Сессия-левиафан | Leviathan Session | epic | ≥ 5 млн output-токенов в одной сессии |
+| gutenberg | Гутенберг | Gutenberg | legendary | ≥ 25 млн токенов (лестница над «Печатным станком») |
+| deep_thinker | Глубокомысленный | Deep Thinker | rare | thinking-блоки в ≥ 60% ответов |
+| siege_engineer | Осадный инженер | Siege Engineer | epic | ≥ 20 000 вызовов инструментов |
+| gallery_master | Галерист | Gallery Master | epic | ≥ 10 картинок на 100 реплик (лестница над «Скриншотером») |
+| live_conductor | Дирижёр на лету | Live Conductor | epic | ≥ 30 прерываний на 100 реплик (лестница над «Стоп-краном») |
+| perpetual_engine | Вечный двигатель | Perpetual Engine | rare | каждый день недели ≥ 5% корпуса, 500+ реплик |
+| world_strider | Скиталец миров | World Strider | rare | ≥ 30 проектов за период |
+| release_conveyor | Конвейер релизов | Release Conveyor | legendary | ≥ 25 PR из сессий (лестница над «Шиппером») |
+| non_negotiable | Не обсуждается | Non-Negotiable | common | категоричные формулировки в ≥ 10% реплик |
 
 Принцип прогрессии (по модели GitHub Achievements с тирами Bronze/Silver/Gold): часть ачивок
 образует лестницы — «Клуб ста» → «Тысяча голосов» (объём), «Спринтер» → «Романист» (стиль).

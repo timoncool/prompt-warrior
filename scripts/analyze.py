@@ -754,11 +754,75 @@ ACHIEVEMENTS = [
      lambda m, r: m.get("subagent_spawn_calls", 0) >= 50),
     ("legion_lord", "Владыка легионов", "Lord of Legions", "legendary", "Тысяча Клинков", "A Thousand Blades",
      lambda m, r: m.get("subagent_spawn_calls", 0) >= 200),
+    ("bilingual_blade", "Двуязычный клинок", "Bilingual Blade", "rare", "Говорящий на Двух Языках", "Speaker of Two Tongues",
+     lambda m, r: m.get("code_switching_pct", 0) >= 10),
+    ("why_seeker", "Философ", "The Philosopher", "rare", "Вопрошающий к Корням", "Asker of Roots",
+     lambda m, r: m.get("question_types_pct", {}).get("why", 0) >= 20),
+    ("babel_scribe", "Вавилонский писарь", "Babel Scribe", "rare", "Пишущий на Всех Наречиях", "Scribe of All Tongues",
+     lambda m, r: m.get("distinct_extensions", 0) >= 8),
+    ("puppeteer", "Кукловод серверов", "Server Puppeteer", "rare", "Дёргающий за Нити", "Puller of Strings",
+     lambda m, r: m.get("mcp_share_pct", 0) >= 25),
+    ("update_veteran", "Ветеран обновлений", "Update Veteran", "common", "Переживший Версии", "Survivor of Versions",
+     lambda m, r: m.get("versions_seen", 0) >= 5),
+    ("branch_weaver", "Ткач ветвей", "Branch Weaver", "rare", "Плетущий Ветви", "Weaver of Branches",
+     lambda m, r: m.get("branches_seen", 0) >= 10),
+    ("leviathan", "Сессия-левиафан", "Leviathan Session", "epic", "Пробудивший Левиафана", "Waker of the Leviathan",
+     lambda m, r: m.get("top_session_tokens_m", 0) >= 5),
+    ("gutenberg", "Гутенберг", "Gutenberg", "legendary", "Отец Печатного Слова", "Father of the Printed Word",
+     lambda m, r: m.get("tokens_output_m", 0) >= 25),
+    ("deep_thinker", "Глубокомысленный", "Deep Thinker", "rare", "Заставляющий Думать", "Compeller of Thought",
+     lambda m, r: m.get("thinking_share_pct", 0) >= 60),
+    ("siege_engineer", "Осадный инженер", "Siege Engineer", "epic", "Хозяин Осадных Машин", "Master of Siege Engines",
+     lambda m, r: m.get("tool_calls_total", 0) >= 20000),
+    ("gallery_master", "Галерист", "Gallery Master", "epic", "Хранитель Галереи", "Keeper of the Gallery",
+     lambda m, r: m.get("images_per_100", 0) >= 10),
+    ("live_conductor", "Дирижёр на лету", "Live Conductor", "epic", "Правящий на Полном Скаку", "Ruler at Full Gallop",
+     lambda m, r: m.get("interruptions_per_100", 0) >= 30),
+    ("perpetual_engine", "Вечный двигатель", "Perpetual Engine", "rare", "Не Знающий Простоя", "Knower of No Idle",
+     lambda m, r: m.get("weekday_min_share_pct", 0) >= 5 and m["messages"] >= 500),
+    ("world_strider", "Скиталец миров", "World Strider", "rare", "Шагающий Между Мирами", "Strider Between Worlds",
+     lambda m, r: m.get("projects_count", 0) >= 30),
+    ("release_conveyor", "Конвейер релизов", "Release Conveyor", "legendary", "Кующий Без Остановки", "Forger Without Pause",
+     lambda m, r: m.get("pr_count", 0) >= 25),
+    ("non_negotiable", "Не обсуждается", "Non-Negotiable", "common", "Ставящий Точку", "Setter of Full Stops",
+     lambda m, r: m.get("categorical_pct", 0) >= 10),
 ]
 
 
 ACHIEVEMENT_DESCS = {
     # id -> (флейвор RU, условие RU, flavor EN, condition EN)
+    "bilingual_blade": ("Русский и английский в одной фразе — и модель понимает", "код-свитчинг в ≥ 10% реплик",
+                        "Russian and English in one phrase — and the model gets it", "code-switching in ≥ 10% of messages"),
+    "why_seeker": ("«Почему» для вас важнее, чем «как»", "≥ 20% вопросов — про причины",
+                   "Why matters more to you than how", "≥ 20% of questions ask why"),
+    "babel_scribe": ("От фронта до конфигов: рука лежит на всём", "≥ 8 разных расширений файлов в работе",
+                     "From frontend to configs: your hand touches everything", "≥ 8 distinct file extensions touched"),
+    "puppeteer": ("Внешние серверы пляшут под вашу дудку", "≥ 25% вызовов инструментов — MCP",
+                  "External servers dance to your tune", "≥ 25% of tool calls go to MCP"),
+    "update_veteran": ("Видели версии, о которых новички не слышали", "≥ 5 версий Claude Code за период",
+                       "You have seen versions the rookies never heard of", "≥ 5 Claude Code versions in the period"),
+    "branch_weaver": ("Ветки плетутся и вплетаются обратно", "≥ 10 git-веток за период",
+                      "Branches woven out and woven back", "≥ 10 git branches in the period"),
+    "leviathan": ("Одна сессия — как чужой месяц работы", "≥ 5 млн output-токенов в одной сессии",
+                  "One session the size of someone's month", "≥ 5M output tokens in a single session"),
+    "gutenberg": ("Печатный станок был только началом", "≥ 25 млн токенов сгенерировано",
+                  "The printing press was only the beginning", "≥ 25M tokens generated"),
+    "deep_thinker": ("Ваши задачи заставляют модель думать вслух", "thinking-блоки в ≥ 60% ответов",
+                     "Your tasks make the model think out loud", "thinking blocks in ≥ 60% of replies"),
+    "siege_engineer": ("Инструменты бьют без остановки, как осадные машины", "≥ 20 000 вызовов инструментов",
+                       "Tools strike ceaselessly, like siege engines", "≥ 20,000 tool calls"),
+    "gallery_master": ("Скриншот вместо тысячи слов — и стена ими увешана", "≥ 10 картинок на 100 реплик",
+                       "A screenshot instead of a thousand words — walls covered in them", "≥ 10 images per 100 messages"),
+    "live_conductor": ("Оркестр не доигрывает — дирижёр уже машет дальше", "≥ 30 прерываний на 100 реплик",
+                       "The orchestra never finishes — the conductor is already waving on", "≥ 30 interruptions per 100 messages"),
+    "perpetual_engine": ("Нет дня недели, когда станок стоит", "каждый день недели ≥ 5% корпуса при 500+ репликах",
+                         "No day of the week when the machine stands still", "every weekday ≥ 5% of the corpus, 500+ messages"),
+    "world_strider": ("Проекты — как страны: вы везде побывали", "≥ 30 проектов за период",
+                      "Projects are countries: you have been everywhere", "≥ 30 projects in the period"),
+    "release_conveyor": ("PR сходят с конвейера, как клинки с наковальни", "≥ 25 PR из сессий",
+                         "PRs roll off the line like blades off the anvil", "≥ 25 PRs from sessions"),
+    "non_negotiable": ("«Всегда», «никогда», «только так» — рамки ставятся жёстко", "категоричные формулировки в ≥ 10% реплик",
+                       "Always, never, only this way — hard lines drawn", "categorical statements in ≥ 10% of messages"),
     "long_patience": ("Сессии не вскипают — спокойствие как стиль", "вскипает < 10% сессий при 20+ сессиях",
                       "Sessions never boil — calm as a style", "fewer than 10% of sessions flare up across 20+"),
     "strict_acceptor": ("«Нет» — первый ответ на каждый десятый результат", "реплики с «нет / не так / опять» ≥ 10%",
@@ -1039,6 +1103,7 @@ def build_layers(aux, n_messages):
         "tool_error_pct": round(100.0 * aux["tool_errors"] / total_tools, 1) if total_tools else 0,
         "top_mcp_servers": [{"name": n, "count": c} for n, c in mcp_top.most_common(3)],
         "top_extensions": [{"ext": n, "count": c} for n, c in aux["extensions"].most_common(5)],
+        "distinct_extensions": len(aux["extensions"]),
         "subagent_spawn_calls": spawns,
         "entrypoints": [{"name": n, "count": c} for n, c in aux["entrypoints"].most_common(3)],
         "versions_seen": len(aux["versions"]),
@@ -1063,6 +1128,15 @@ def build_profile(messages, aux=None, source="claude-code"):
     m["tokens_output_m"] = round(economy["tokens_output"] / 1e6, 1) if economy else 0
     m["double_texts_per_100"] = round(100.0 * (aux or {}).get("double_texts", 0) / m["messages"], 1) if m["messages"] else 0
     m["subagent_spawn_calls"] = arsenal["subagent_spawn_calls"] if arsenal else 0
+    m["mcp_share_pct"] = arsenal["mcp_share_pct"] if arsenal else 0
+    m["versions_seen"] = arsenal["versions_seen"] if arsenal else 0
+    m["branches_seen"] = arsenal["branches_seen"] if arsenal else 0
+    m["projects_count"] = arsenal["projects_count"] if arsenal else 0
+    m["tool_calls_total"] = arsenal["tool_calls"] if arsenal else 0
+    m["distinct_extensions"] = arsenal["distinct_extensions"] if arsenal else 0
+    m["top_session_tokens_m"] = round(arsenal["top_sessions"][0]["tokens_out"] / 1e6, 1) if arsenal and arsenal["top_sessions"] else 0
+    m["thinking_share_pct"] = round(100.0 * economy["thinking_blocks"] / economy["assistant_messages"], 1) if economy and economy["assistant_messages"] else 0
+    m["weekday_min_share_pct"] = round(100.0 * min(m["weekdays"]) / m["messages"], 1) if m["messages"] and m.get("weekdays") else 0
     if m["messages"] < 30:
         return {"error": "not_enough_data", "messages": m["messages"],
                 "note": "Need at least 30 user messages for a profile."}
