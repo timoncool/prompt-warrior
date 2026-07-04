@@ -88,7 +88,14 @@
    внутри <details class="more"> с summary «Показать все достижения — ещё N (rare и
    common)». Если legendary/epic нет вовсе — показать первые 6 по редкости, остальное
    в аккордеон.
-3. Никаких картинок: ни аватаров, ни иконок, ни SVG, ни base64, ни внешних ресурсов.
+3. Никаких ВНЕШНИХ ресурсов (кроме Google Fonts <link>) и никаких base64-вставок,
+   набранных моделью. Локальное — можно и нужно: avatar.png (4б), SVG-иконки из assets
+   (2б-икон, 4в), фавикон и печать (3а).
+3а. Фавикон и печать: логотип проекта — руничный меч на сургучном круге
+   (assets/rune-sword.svg + assets/logo.svg, game-icons/lorc, CC-BY-3.0).
+   В <head> — data-URI SVG-фавикон (круг #8B2635 + path меча #E8CFB4, path из
+   rune-sword.svg, urlencoded — карточка остаётся автономным файлом). В футере
+   .seal — тот же меч 22px цветом #E8CFB4 вместо текста.
 4. Отдельной секции «Рекомендации» НЕТ — советы живут парами в «Слабое → что делать».
 4а. Идентичность: строка под титулом «{класс} · {раса} ({доля}% реплик)» из profile.identity;
    расу опускать если identity.race == null; класс есть всегда.
@@ -151,7 +158,7 @@
 образце; офлайн деградирует на Georgia — допустимо.
 
 ```html
-<!doctype html><html lang="{{lang}}"><head><meta charset="utf-8"><title>Prompt Warrior</title>
+<!doctype html><html lang="{{lang}}"><head><meta charset="utf-8"><title>Prompt Warrior</title><!-- data-URI фавикон, правило 3а -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Cinzel:wght@500;600&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#120e0b;--card:#1C1714;--oak:#251E19;--oak2:#2B231D;--line:#4A3F35;--text:#E8DFD4;--mut:#B3A18C;--brass:#C9A962;--brass-dim:#8F7440;--crimson:#8B2635}
@@ -237,7 +244,7 @@ ul.plus li::marker{color:#A9BC6E}
 .fix .a{color:#B9C692;font-size:14px;margin-top:2px}
 .fix .ev{color:var(--mut);font-size:12px;font-style:italic}
 .foot{margin-top:26px;border-top:1px solid #3A312A;padding-top:13px;display:flex;justify-content:space-between;position:relative}
-.seal{position:absolute;right:2px;top:-24px;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#A63A48,var(--crimson) 55%,#5E1822);box-shadow:inset 0 2px 4px rgba(255,255,255,.18),inset 0 -3px 6px rgba(0,0,0,.45),0 3px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font:600 14px "Cinzel",Georgia,serif;color:#E8CFB4;text-shadow:0 -1px 1px rgba(0,0,0,.5)}
+.seal{position:absolute;right:2px;top:-26px;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#A63A48,var(--crimson) 55%,#5E1822);box-shadow:inset 0 2px 4px rgba(255,255,255,.18),inset 0 -3px 6px rgba(0,0,0,.45),0 3px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font:600 14px "Cinzel",Georgia,serif;color:#E8CFB4;text-shadow:0 -1px 1px rgba(0,0,0,.5)}
 </style></head><body><div class="card">
 
 <div class="head">
@@ -307,7 +314,7 @@ ul.plus li::marker{color:#A9BC6E}
 <h2 style="color:#D8A091">Слабое и что делать</h2>
 <!-- до 4 .fix-плашек: слабость / → что делать / пруф-ссылка -->
 
-<div class="foot muted"><span style="font-family:'Cinzel',Georgia,serif;letter-spacing:.15em;font-size:11px">SCALE {{version}}</span><span class="seal">PW</span><span style="text-align:right">{{Понравилось? Поставьте звезду ★ / Enjoyed it? Star the repo ★}}<br><a href="https://github.com/timoncool/prompt-warrior">github.com/timoncool/prompt-warrior</a></span></div>
+<div class="foot muted"><span style="font-family:'Cinzel',Georgia,serif;letter-spacing:.15em;font-size:11px">SCALE {{version}}</span><span class="seal"><!-- rune-sword 22px, #E8CFB4 --></span><span style="text-align:right">{{Понравилось? Поставьте звезду ★ / Enjoyed it? Star the repo ★}}<br><a href="https://github.com/timoncool/prompt-warrior">github.com/timoncool/prompt-warrior</a></span></div>
 </div></body></html>
 ```
 
