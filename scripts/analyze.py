@@ -844,6 +844,52 @@ def compute_achievements(m, rage):
     return earned
 
 
+HARNESS_CLASSES = {
+    # класс — от харнесса (источника логов)
+    "claude-code": ("Воин Claude Code", "Claude Code Warrior"),
+    "codex": ("Легионер Codex", "Codex Legionnaire"),
+    "opencode": ("Странник OpenCode", "OpenCode Wanderer"),
+    "gemini": ("Апостол Gemini", "Gemini Apostle"),
+    "copilot": ("Оруженосец Copilot", "Copilot Squire"),
+}
+
+MODEL_RACES = {
+    # раса — от доминирующей модели в сессиях
+    "fable": ("Сияющий Фейбл", "Radiant Fable"),
+    "opus": ("Могучий Опус", "Mighty Opus"),
+    "sonnet": ("Стремительный Сонет", "Swift Sonnet"),
+    "haiku": ("Лёгкий Хайку", "Featherlight Haiku"),
+    "gpt": ("Дитя GPT", "Child of GPT"),
+    "gemini": ("Близнец Джемини", "Gemini Twin"),
+}
+
+
+def model_family(name):
+    low = (name or "").lower()
+    for fam in MODEL_RACES:
+        if fam in low:
+            return fam
+    return None
+
+
+def build_identity(source, aux):
+    cls_ru, cls_en = HARNESS_CLASSES.get(source, ("Воин " + source, source.title() + " Warrior"))
+    identity = {"class": {"ru": cls_ru, "en": cls_en, "harness": source}, "race": None}
+    models = (aux or {}).get("models")
+    if models:
+        fams = Counter()
+        for name, cnt in models.items():
+            fam = model_family(name)
+            if fam:
+                fams[fam] += cnt
+        if fams:
+            top_fam, top_cnt = fams.most_common(1)[0]
+            ru, en = MODEL_RACES[top_fam]
+            identity["race"] = {"ru": ru, "en": en, "family": top_fam,
+                                "share_pct": round(100.0 * top_cnt / sum(fams.values()), 1)}
+    return identity
+
+
 TOOL_CATS = {
     "operator": ("Bash", "PowerShell"),
     "surgeon": ("Edit", "Write", "NotebookEdit"),
@@ -889,7 +935,7 @@ def build_layers(aux, n_messages):
     return economy, arsenal
 
 
-def build_profile(messages, aux=None):
+def build_profile(messages, aux=None, source="claude-code"):
     m = compute_metrics(messages)
     n_int = (aux or {}).get("interruptions", 0)
     m["interruptions"] = n_int
@@ -930,6 +976,7 @@ def build_profile(messages, aux=None):
         "gauges": compute_gauges(m, rage),
         "economy": economy,
         "arsenal": arsenal,
+        "identity": build_identity(source, aux),
     }
 
 
@@ -1047,7 +1094,7 @@ def main():
     aux = {}
     messages = src["collect"](logs_dir, args.project, aux)
     messages = filter_by_range(messages, args.days, args.date_from, args.date_to)
-    profile = build_profile(messages, aux)
+    profile = build_profile(messages, aux, args.source)
     if "metrics" in profile:
         profile["range"] = {"days": args.days, "from": args.date_from, "to": args.date_to,
                             "mode": ("last_%d_days" % args.days) if args.days
