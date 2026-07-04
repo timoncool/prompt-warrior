@@ -52,18 +52,29 @@ Evidence base: два дипресёрч-прогона 2026-07-03/04, 3-vote ad
 **IF rage >= 60 OR insult_pct >= 10** → Фан-факт из исследований: грубость и угрозы почти
 не влияют на качество ответов LLM (агрегатный эффект ≈ 0), так что ругайтесь на здоровье —
 но реплика «что за говно?????» не содержит диагностики, и модель всё равно переспросит.
-Экономнее сразу: что сломалось + что ожидалось.
-*Evidence: threatening/tipping has no significant benchmark effect (arxiv.org/abs/2508.00614);
-tone effects are narrow, small (~3%) and domain-specific (arxiv.org/html/2512.12812v1).*
+Экономнее сразу: что сломалось + что ожидалось. Нюансы: на уровне ОТДЕЛЬНЫХ задач эффект
+тона существует, но непредсказуем по направлению — может и помочь, и навредить; значимые
+эффекты нашли только в гуманитарных задачах (~2-3%), в STEM — а кодинг ближе к STEM — их нет.
+*Evidence: threatening/tipping has no significant benchmark effect, per-question effects real
+but unpredictable (arxiv.org/abs/2508.00614); significant tone effects only in Humanities,
+~2-3%, none in STEM (arxiv.org/html/2512.12812v1).*
 
 **IF diplomacy < 20** → Вежливость сама по себе качество тоже почти не меняет — но оптимальный тон
-различается по языкам (для английского лучше вежливо-прямой стиль), а позитивное подкрепление
-(«это верно, продолжай») помогает модели удерживать удачное направление.
-*Evidence: PLUM cross-lingual study — polite prompts improve quality up to 11% on average,
-effect language- and model-dependent (arxiv.org/pdf/2604.16275; arxiv.org/abs/2402.14531).*
+различается по языкам: для английского лучше вежливо-прямой стиль, для испанского внезапно
+напористый; русский в этих работах НЕ исследован — честно говорим «прямых данных нет».
+Позитивное подкрепление («это верно, продолжай») полезно независимо от тона.
+*Evidence: PLUM cross-lingual study (EN/HI/ES, 22 500 пар, 8-факторный скоринг) — polite
+prompts improve quality up to 11% on average, effect language- and model-dependent
+(arxiv.org/pdf/2604.16275; arxiv.org/abs/2402.14531). RU not studied.*
 
 **IF caps_pct >= 20** → КАПС и «??????» модель понимает как усиление, но это токены без
 информации. Тот же эффект даёт одно слово: «критично» или «немедленно».
+
+**UNIVERSAL (при любом профиле, если осталось место)** → Самый доказанный способ улучшить
+результаты вайбкодинга — не тюнинг формулировок, а предметные знания: понимание CS предсказывает
+успех LLM-кодинга даже после вычета общего интеллекта. Читайте код, который генерит модель.
+*Evidence: preregistered study, n=100, CHI 2026 (arxiv.org/pdf/2603.14133) — vote 3-0; смежный
+клейм про «письменные навыки» проверку НЕ пережил (0-3).*
 
 ## Process & sustainability
 
@@ -84,4 +95,6 @@ effect language- and model-dependent (arxiv.org/pdf/2604.16275; arxiv.org/abs/24
 
 **IF max_session_messages >= 300** → Марафонские сессии копят контекст-мусор: после большого
 завершённого куска дешевле начать новую сессию с коротким саммари, чем тянуть хвост.
-*Evidence: Anthropic context engineering — attention budget degrades with context growth.*
+*Evidence: Anthropic context engineering — контекст определяется как конечный ресурс, который
+надо курировать (подтверждено 2-1); формулировка «context rot» проверку НЕ пережила (1-2)
+и не используется.*

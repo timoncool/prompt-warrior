@@ -41,6 +41,11 @@ leaves your machine.
    ```powershell
    git clone https://github.com/timoncool/prompt-warrior "$env:USERPROFILE\.claude\skills\prompt-warrior"
    ```
+   or install as a plugin:
+   ```
+   /plugin marketplace add timoncool/prompt-warrior
+   /plugin install prompt-warrior@prompt-warrior
+   ```
 
 2. **Ask Claude Code**
    ```
