@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/logo.svg" alt="Prompt Warrior emblem" width="112">
+
 # Prompt Warrior
 
 **Turn your Claude Code logs into a gamified analytical portrait of how you work with AI.**
