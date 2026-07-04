@@ -25,7 +25,7 @@ Windows (PowerShell):
 git clone https://github.com/timoncool/ai-collab-profile "$env:USERPROFILE\.claude\skills\ai-collab-profile"
 ```
 
-That's it. Python 3.8+ (stdlib only), no dependencies, no API keys.
+That's it. Python 3.8+ (stdlib only), no dependencies, no API keys — avatar generation included (AI Horde anonymous access).
 
 ## Use
 
@@ -43,8 +43,8 @@ You get one card — a serious analytical portrait with RPG flavor woven in:
 - **The flavor**: fun RPG title as the headline, six D&D stats in a compact strip
   (STR directiveness, DEX tempo, CON endurance, INT context, WIS verification,
   CHA diplomacy), the RAGE meter, up to 24 achievements (common → legendary);
-- **Avatar** — a real AI-generated character portrait from your profile
-  (free open generator; final endpoint selection in progress);
+- **Avatar** — a real AI-generated character portrait via [AI Horde](https://aihorde.net)
+  (open volunteer GPU network: free, anonymous, no registration, no tokens);
 - **3-6 personalized recommendations**, each backed by published research or Anthropic docs
   (see [references/recommendations.md](references/recommendations.md));
 - Inline widget + self-contained `ai-profile.html` you can open, screenshot and share.
